@@ -1,4 +1,4 @@
-package hr.fer.zemris.bachelor.LCS.CodeFragment;
+package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
 public class TerminalNode extends AbstractNode {
 

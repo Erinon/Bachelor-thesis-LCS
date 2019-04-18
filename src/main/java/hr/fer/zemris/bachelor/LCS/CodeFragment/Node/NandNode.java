@@ -1,9 +1,6 @@
-package hr.fer.zemris.bachelor.LCS.CodeFragment;
+package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
-public class NandNode extends AbstractNode {
-
-    private AbstractNode left;
-    private AbstractNode right;
+public class NandNode extends BinaryNode {
 
     public NandNode(AbstractNode left, AbstractNode right) {
         this.left = left;

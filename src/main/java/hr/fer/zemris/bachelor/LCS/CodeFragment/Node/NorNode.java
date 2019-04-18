@@ -1,9 +1,6 @@
-package hr.fer.zemris.bachelor.LCS.CodeFragment;
+package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
-public class NorNode extends AbstractNode {
-
-    private AbstractNode left;
-    private AbstractNode right;
+public class NorNode extends BinaryNode {
 
     public NorNode(AbstractNode left, AbstractNode right) {
         this.left = left;
