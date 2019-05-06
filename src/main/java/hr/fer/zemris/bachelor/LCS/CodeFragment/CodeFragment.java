@@ -7,7 +7,6 @@ import hr.fer.zemris.bachelor.LCS.CodeFragment.Node.TerminalNode;
 
 public class CodeFragment {
 
-    private static int MAXIMUM_DEPTH = 2;
     private static CodeFragment dontCareFragment;
     private AbstractNode rootNode;
 

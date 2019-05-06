@@ -10,8 +10,8 @@ public class NotNode extends UnaryNode {
         return !child.getValue(input);
     }
 
-    public String toString() {
-        return child.toString() + '~';
+    String getOperator() {
+        return "~";
     }
 
 }

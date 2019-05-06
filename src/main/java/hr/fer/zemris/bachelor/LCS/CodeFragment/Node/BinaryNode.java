@@ -5,4 +5,11 @@ public abstract class BinaryNode extends AbstractNode {
     AbstractNode left;
     AbstractNode right;
 
+    abstract String getOperator();
+
+    @Override
+    public String toString() {
+        return "(" + left.toString() + right.toString() + getOperator() + ")";
+    }
+
 }

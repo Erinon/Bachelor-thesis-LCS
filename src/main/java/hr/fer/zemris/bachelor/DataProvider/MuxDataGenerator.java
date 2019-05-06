@@ -1,13 +1,13 @@
 package hr.fer.zemris.bachelor.DataProvider;
 
+import hr.fer.zemris.bachelor.Constants.Constants;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
 public class MuxDataGenerator implements DataProvider {
 
-    private static int GREEDY_BREAKPOINT = 4;
-    private static int MAX_DATA_SIZE = 10000;
     private int controlBits;
     private int count = 0;
     private int size;
@@ -25,7 +25,7 @@ public class MuxDataGenerator implements DataProvider {
     }
 
     private void incCount() {
-        if (controlBits < GREEDY_BREAKPOINT) {
+        if (controlBits < Constants.GREEDY_BREAKPOINT_BIT) {
             count = (count + 1) % (int)Math.round(Math.pow(2, size));
         }
     }
@@ -57,7 +57,7 @@ public class MuxDataGenerator implements DataProvider {
     public Set<DataPiece> getData() {
         Set<DataPiece> data = new HashSet<DataPiece>();
 
-        int dataSize = controlBits < GREEDY_BREAKPOINT ? (int)Math.round(Math.pow(2, size)) : MAX_DATA_SIZE;
+        int dataSize = controlBits < Constants.GREEDY_BREAKPOINT_BIT ? (int)Math.round(Math.pow(2, size)) : Constants.MAX_DATA_SIZE;
 
         for (int i = 0; i < dataSize; i++) {
             data.add(getNextDataPiece());
@@ -68,7 +68,7 @@ public class MuxDataGenerator implements DataProvider {
 
     public DataPiece getNextDataPiece() {
         boolean[] input = new boolean[size];
-        int output = generateDataPiece(input, controlBits >= GREEDY_BREAKPOINT);
+        int output = generateDataPiece(input, controlBits >= Constants.GREEDY_BREAKPOINT_BIT);
 
         return new DataPiece(input, output);
     }

@@ -11,8 +11,8 @@ public class NorNode extends BinaryNode {
         return !(left.getValue(input) || right.getValue(input));
     }
 
-    public String toString() {
-        return left.toString() + right.toString() + 'r';
+    String getOperator() {
+        return "r";
     }
 
 }

@@ -11,8 +11,8 @@ public class NandNode extends BinaryNode {
         return !(left.getValue(input) && right.getValue(input));
     }
 
-    public String toString() {
-        return left.toString() + right.toString() + 'd';
+    String getOperator() {
+        return "d";
     }
 
 }

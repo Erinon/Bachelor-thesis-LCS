@@ -11,8 +11,8 @@ public class OrNode extends BinaryNode {
         return left.getValue(input) || right.getValue(input);
     }
 
-    public String toString() {
-        return left.toString() + right.toString() + '|';
+    String getOperator() {
+        return "|";
     }
 
 }
