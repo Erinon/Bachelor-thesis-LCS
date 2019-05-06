@@ -34,7 +34,8 @@ public class FragmentTester {
         System.out.println(cf.toString());
 
         for (int i = 0; i < 5; i++) {
-            System.out.println(CodeFragment.getRandomFragment(input));
+            CodeFragment cf1 = CodeFragment.getRandomFragment(input);
+            System.out.println(cf1 + " -> " + cf1.evaluate(input));
         }
     }
 

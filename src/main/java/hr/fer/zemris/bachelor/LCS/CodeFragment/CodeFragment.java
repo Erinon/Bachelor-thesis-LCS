@@ -2,13 +2,11 @@ package hr.fer.zemris.bachelor.LCS.CodeFragment;
 
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.Node.*;
-
-import java.util.Random;
+import hr.fer.zemris.bachelor.NumberGenerator.NumberGenerator;
 
 public class CodeFragment {
 
     private static CodeFragment dontCareFragment;
-    private static final Random r = new Random();
     private AbstractNode rootNode;
 
     public CodeFragment(AbstractNode rootNode) {
@@ -21,14 +19,14 @@ public class CodeFragment {
 
     private static AbstractNode getRandomSubtree(int depth, int inputSize) {
         if (depth <= 0) {
-            return new TerminalNode((r.nextInt() % inputSize + inputSize) % inputSize);
+            return new TerminalNode(NumberGenerator.nextInt(0, inputSize - 1));
         }
 
         AbstractNode node = null;
 
-        switch ((r.nextInt() % 3 + 3) % 3) {
+        switch (NumberGenerator.nextInt(0, 2)) {
             case 0:
-                switch ((r.nextInt() % 4 + 4) % 4) {
+                switch (NumberGenerator.nextInt(0, 3)) {
                     case 0:
                         node = new AndNode(
                                 getRandomSubtree(depth - 1, inputSize),
@@ -61,7 +59,7 @@ public class CodeFragment {
                 node = new NotNode(getRandomSubtree(depth - 1, inputSize));
                 break;
             case 2:
-                node = new TerminalNode((r.nextInt() % inputSize + inputSize) % inputSize);
+                node = new TerminalNode(NumberGenerator.nextInt(0, inputSize - 1));
                 break;
             default:
                 break;
@@ -85,7 +83,11 @@ public class CodeFragment {
 
         return dontCareFragment;
     }
-//System.out.println(node);
+
+    public boolean isDontCareFragment() {
+        return this == dontCareFragment;
+    }
+
     public boolean evaluate(boolean[] input) {
         return rootNode.getValue(input);
     }
