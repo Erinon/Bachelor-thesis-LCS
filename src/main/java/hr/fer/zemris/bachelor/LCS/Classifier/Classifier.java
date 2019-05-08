@@ -118,8 +118,19 @@ public class Classifier {
         if (this.action != that.action) {
             return false;
         }
-        //TODO
-        return true;
+
+        int x = getNumberOfDontCareCodeFragments();
+        int y = that.getNumberOfDontCareCodeFragments();
+
+        if (x != y) {
+            return false;
+        }
+
+        Set<CodeFragment> X = new HashSet<CodeFragment>(Arrays.asList(condition));
+        Set<CodeFragment> Y = new HashSet<CodeFragment>(Arrays.asList(that.condition));
+
+        return X.equals(Y);
+
     }
 
 }
