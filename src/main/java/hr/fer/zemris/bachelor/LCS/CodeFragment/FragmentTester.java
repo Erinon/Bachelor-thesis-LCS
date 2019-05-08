@@ -5,25 +5,25 @@ import hr.fer.zemris.bachelor.LCS.CodeFragment.Node.*;
 public class FragmentTester {
 
     public static void main(String[] args) {
-        AbstractNode t0 = new TerminalNode(0);
-        AbstractNode t1 = new TerminalNode(1);
-        AbstractNode t2 = new TerminalNode(2);
-        AbstractNode t5 = new TerminalNode(5);
+        Node t0 = new TerminalNode(0);
+        Node t1 = new TerminalNode(1);
+        Node t2 = new TerminalNode(2);
+        Node t5 = new TerminalNode(5);
 
-        AbstractNode o1 = new OrNode(t0, t1);
+        Node o1 = new OrNode(t0, t1);
 
-        AbstractNode a1 = new AndNode(t2, t5);
+        Node a1 = new AndNode(t2, t5);
 
-        AbstractNode o2 = new OrNode(o1, a1);
+        Node o2 = new OrNode(o1, a1);
 
         boolean[] input = {false, false, false, true, false, true};
 
         System.out.println(o2);
         System.out.println(o2.getValue(input));
 
-        AbstractNode nTerm = new TerminalNode(0);
-        AbstractNode nNot = new NotNode(nTerm);
-        AbstractNode nOr = new OrNode(nTerm, nNot);
+        Node nTerm = new TerminalNode(0);
+        Node nNot = new NotNode(nTerm);
+        Node nOr = new OrNode(nTerm, nNot);
 
         System.out.println(nOr);
         System.out.println(nOr.getValue(input));

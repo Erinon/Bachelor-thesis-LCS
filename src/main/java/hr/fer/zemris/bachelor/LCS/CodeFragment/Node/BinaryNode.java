@@ -1,9 +1,9 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
-public abstract class BinaryNode extends AbstractNode {
+public abstract class BinaryNode extends Node {
 
-    AbstractNode left;
-    AbstractNode right;
+    Node left;
+    Node right;
 
     abstract String getOperator();
 

@@ -2,7 +2,7 @@ package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
 public class OrNode extends BinaryNode {
 
-    public OrNode(AbstractNode left, AbstractNode right) {
+    public OrNode(Node left, Node right) {
         this.left = left;
         this.right = right;
     }

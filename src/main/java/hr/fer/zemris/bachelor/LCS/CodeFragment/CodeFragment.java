@@ -7,9 +7,9 @@ import hr.fer.zemris.bachelor.NumberGenerator.NumberGenerator;
 public class CodeFragment {
 
     private static CodeFragment dontCareFragment;
-    private AbstractNode rootNode;
+    private Node rootNode;
 
-    public CodeFragment(AbstractNode rootNode) {
+    public CodeFragment(Node rootNode) {
         if (rootNode == null) {
             throw new NullPointerException("Root node must not be null.");
         }
@@ -17,12 +17,12 @@ public class CodeFragment {
         this.rootNode = rootNode;
     }
 
-    private static AbstractNode getRandomSubtree(int depth, int inputSize) {
+    private static Node getRandomSubtree(int depth, int inputSize) {
         if (depth <= 0) {
             return new TerminalNode(NumberGenerator.nextInt(0, inputSize - 1));
         }
 
-        AbstractNode node = null;
+        Node node = null;
 
         switch (NumberGenerator.nextInt(0, 2)) {
             case 0:

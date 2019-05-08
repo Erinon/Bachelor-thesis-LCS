@@ -1,6 +1,6 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
-public class TerminalNode extends AbstractNode {
+public class TerminalNode extends Node {
 
     private int index;
 

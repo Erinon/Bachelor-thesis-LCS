@@ -2,7 +2,7 @@ package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
 public class AndNode extends BinaryNode {
 
-    public AndNode(AbstractNode left, AbstractNode right) {
+    public AndNode(Node left, Node right) {
         this.left = left;
         this.right = right;
     }

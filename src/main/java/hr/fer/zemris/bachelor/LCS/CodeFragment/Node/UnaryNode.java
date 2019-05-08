@@ -1,8 +1,8 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
-public abstract class UnaryNode extends AbstractNode {
+public abstract class UnaryNode extends Node {
 
-    AbstractNode child;
+    Node child;
 
     abstract String getOperator();
 

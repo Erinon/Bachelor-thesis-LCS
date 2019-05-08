@@ -2,7 +2,7 @@ package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
 public class NotNode extends UnaryNode {
 
-    public NotNode(AbstractNode child) {
+    public NotNode(Node child) {
         this.child = child;
     }
 
