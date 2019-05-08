@@ -97,4 +97,19 @@ public class CodeFragment {
         return rootNode.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        CodeFragment that = (CodeFragment) obj;
+
+        return rootNode.equals(that.rootNode);
+    }
+
 }

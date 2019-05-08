@@ -11,4 +11,19 @@ public abstract class UnaryNode extends Node {
         return child.toString() + getOperator();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        UnaryNode that = (UnaryNode) obj;
+
+        return getOperator().equals(that.getOperator()) && child.equals(that.child);
+    }
+
 }

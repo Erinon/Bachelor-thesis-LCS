@@ -5,4 +5,7 @@ public abstract class Node {
     public abstract boolean getValue(boolean[] input);
     public abstract String toString();
 
+    @Override
+    public abstract boolean equals(Object obj);
+
 }

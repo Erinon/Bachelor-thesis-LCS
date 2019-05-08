@@ -37,6 +37,17 @@ public class FragmentTester {
             CodeFragment cf1 = CodeFragment.getRandomFragment(input);
             System.out.println(cf1 + " -> " + cf1.evaluate(input));
         }
+
+        boolean[] input2 = {false, true, true};
+        System.out.println("Testing equalities");
+        for (int i = 0; i < 10000; i++) {
+            CodeFragment cf1 = CodeFragment.getRandomFragment(input2);
+            CodeFragment cf2 = CodeFragment.getRandomFragment(input2);
+
+            if (cf1.equals(cf2)) {
+                System.out.println(cf1 + "  " + cf2);
+            }
+        }
     }
 
 }
