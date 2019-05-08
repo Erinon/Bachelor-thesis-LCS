@@ -85,7 +85,11 @@ public class CodeFragment {
     }
 
     public boolean isDontCareFragment() {
-        return this == dontCareFragment;
+        if (this == dontCareFragment) {
+            return true;
+        }
+
+        return equals(dontCareFragment);
     }
 
     public boolean evaluate(boolean[] input) {
@@ -109,7 +113,13 @@ public class CodeFragment {
 
         CodeFragment that = (CodeFragment) obj;
 
-        return rootNode.equals(that.rootNode);
+        //return rootNode.equals(that.rootNode);
+        return toString().equals(that.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 
 }

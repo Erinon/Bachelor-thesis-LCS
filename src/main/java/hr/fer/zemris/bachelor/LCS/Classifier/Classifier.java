@@ -2,6 +2,10 @@ package hr.fer.zemris.bachelor.LCS.Classifier;
 
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class Classifier {
 
     private CodeFragment[] condition;
@@ -50,6 +54,18 @@ public class Classifier {
         this.action = action;
     }
 
+    private int getNumberOfDontCareCodeFragments() {
+        int n = 0;
+
+        for (CodeFragment cf : condition) {
+            if (cf.isDontCareFragment()) {
+                n++;
+            }
+        }
+
+        return n;
+    }
+
     private void checkIndex(int index) {
         if (index < 0 || index >= condition.length) {
             throw new IllegalArgumentException();
@@ -67,7 +83,23 @@ public class Classifier {
     }
 
     public boolean isMoreGeneral(Classifier that) {
-        //TODO
+        int x = getNumberOfDontCareCodeFragments();
+        int y = that.getNumberOfDontCareCodeFragments();
+
+        if (x <= y) {
+            return false;
+        }
+
+        Set<CodeFragment> Y = new HashSet<CodeFragment>(Arrays.asList(that.condition));
+
+        for (CodeFragment cf : condition) {
+            if (!cf.isDontCareFragment()) {
+                if (!Y.contains(cf)) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 

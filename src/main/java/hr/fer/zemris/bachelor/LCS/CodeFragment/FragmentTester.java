@@ -38,7 +38,7 @@ public class FragmentTester {
             System.out.println(cf1 + " -> " + cf1.evaluate(input));
         }
 
-        boolean[] input2 = {false, true, true};
+        boolean[] input2 = {false, true};
         System.out.println("Testing equalities");
         for (int i = 0; i < 10000; i++) {
             CodeFragment cf1 = CodeFragment.getRandomFragment(input2);
