@@ -4,7 +4,6 @@ import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.NumberGenerator.NumberGenerator;
 
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 
 public class MuxDataGenerator implements DataProvider {
