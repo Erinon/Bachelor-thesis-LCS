@@ -7,6 +7,7 @@ public class Classifier {
     private CodeFragment[] condition;
     private int conditionSize;
     private double action;
+    private double fitness;
 
     public Classifier(int conditionSize) {
         if (conditionSize <= 0) {
@@ -15,6 +16,14 @@ public class Classifier {
 
         this.conditionSize = conditionSize;
         this.condition = new CodeFragment[conditionSize];
+    }
+
+    public double getFitness() {
+        return fitness;
+    }
+
+    public void setFitness(double fitness) {
+        this.fitness = fitness;
     }
 
     public int getConditionSize() {
@@ -45,6 +54,16 @@ public class Classifier {
         if (index < 0 || index >= condition.length) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public boolean doesMatch(boolean[] input) {
+        for (int i = 0; i < conditionSize; i++) {
+            if (!condition[i].evaluate(input)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public boolean isMoreGeneral(Classifier that) {
