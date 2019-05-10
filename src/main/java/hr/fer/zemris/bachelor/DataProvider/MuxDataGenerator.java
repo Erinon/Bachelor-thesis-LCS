@@ -1,7 +1,7 @@
 package hr.fer.zemris.bachelor.DataProvider;
 
 import hr.fer.zemris.bachelor.Constants.Constants;
-import hr.fer.zemris.bachelor.NumberGenerator.NumberGenerator;
+import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -34,7 +34,7 @@ public class MuxDataGenerator implements DataProvider {
         int targetPow = (int)Math.round(Math.pow(2, controlBits - 1));
 
         for (i = 0; i < controlBits; i++) {
-            if (data[i] = randomize ? NumberGenerator.nextBoolean() : (count & (1 << i)) != 0) {
+            if (data[i] = randomize ? RandomNumberGenerator.nextBoolean() : (count & (1 << i)) != 0) {
                 index += targetPow;
             }
 
@@ -42,7 +42,7 @@ public class MuxDataGenerator implements DataProvider {
         }
 
         for (i = controlBits; i < size; i++) {
-            data[i] = randomize ? NumberGenerator.nextBoolean() : (count & (1 << i)) != 0;
+            data[i] = randomize ? RandomNumberGenerator.nextBoolean() : (count & (1 << i)) != 0;
         }
 
         if (!randomize) {

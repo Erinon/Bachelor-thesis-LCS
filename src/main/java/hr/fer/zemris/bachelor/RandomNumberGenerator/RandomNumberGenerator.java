@@ -1,8 +1,8 @@
-package hr.fer.zemris.bachelor.NumberGenerator;
+package hr.fer.zemris.bachelor.RandomNumberGenerator;
 
 import java.util.Random;
 
-public class NumberGenerator {
+public class RandomNumberGenerator {
 
     private static final Random r = new Random();
 

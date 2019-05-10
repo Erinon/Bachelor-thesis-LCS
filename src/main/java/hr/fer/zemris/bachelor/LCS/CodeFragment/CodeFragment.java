@@ -2,7 +2,7 @@ package hr.fer.zemris.bachelor.LCS.CodeFragment;
 
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.Node.*;
-import hr.fer.zemris.bachelor.NumberGenerator.NumberGenerator;
+import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 public class CodeFragment {
 
@@ -19,14 +19,14 @@ public class CodeFragment {
 
     private static Node getRandomSubtree(int depth, int inputSize) {
         if (depth <= 0) {
-            return new TerminalNode(NumberGenerator.nextInt(0, inputSize - 1));
+            return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
         }
 
         Node node = null;
 
-        switch (NumberGenerator.nextInt(0, 2)) {
+        switch (RandomNumberGenerator.nextInt(0, 2)) {
             case 0:
-                switch (NumberGenerator.nextInt(0, 3)) {
+                switch (RandomNumberGenerator.nextInt(0, 3)) {
                     case 0:
                         node = new AndNode(
                                 getRandomSubtree(depth - 1, inputSize),
@@ -59,7 +59,7 @@ public class CodeFragment {
                 node = new NotNode(getRandomSubtree(depth - 1, inputSize));
                 break;
             case 2:
-                node = new TerminalNode(NumberGenerator.nextInt(0, inputSize - 1));
+                node = new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
                 break;
             default:
                 break;
