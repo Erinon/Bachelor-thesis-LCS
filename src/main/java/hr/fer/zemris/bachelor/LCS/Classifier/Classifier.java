@@ -11,7 +11,10 @@ public class Classifier {
     private CodeFragment[] condition;
     private int conditionSize;
     private double action;
+    private double prediction;
+    private double predictionError;
     private double fitness;
+    private int numerosity;
 
     public Classifier(int conditionSize) {
         if (conditionSize <= 0) {
@@ -20,6 +23,18 @@ public class Classifier {
 
         this.conditionSize = conditionSize;
         this.condition = new CodeFragment[conditionSize];
+    }
+
+    public int getNumerosity() {
+        return numerosity;
+    }
+
+    public double getPrediction() {
+        return prediction;
+    }
+
+    public double getPredictionError() {
+        return predictionError;
     }
 
     public double getFitness() {
