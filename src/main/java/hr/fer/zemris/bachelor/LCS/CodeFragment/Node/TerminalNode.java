@@ -31,4 +31,8 @@ public class TerminalNode extends Node {
         return index == that.index;
     }
 
+    public Node deepCopy() {
+        return new TerminalNode(index);
+    }
+
 }

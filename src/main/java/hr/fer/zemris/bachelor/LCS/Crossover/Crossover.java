@@ -4,6 +4,6 @@ import hr.fer.zemris.bachelor.LCS.Classifier.Classifier;
 
 public interface Crossover {
 
-    Classifier[] crossoverOperation(Classifier cl1, Classifier cl2);
+    void crossoverOperation(Classifier cl1, Classifier cl2);
 
 }

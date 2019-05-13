@@ -3,7 +3,10 @@ package hr.fer.zemris.bachelor.LCS;
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.Classifier.Classifier;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
+import hr.fer.zemris.bachelor.LCS.Crossover.Crossover;
 import hr.fer.zemris.bachelor.LCS.Environment.Environment;
+import hr.fer.zemris.bachelor.LCS.Mutation.Mutation;
+import hr.fer.zemris.bachelor.LCS.Selection.Selection;
 import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 import java.util.HashMap;
@@ -14,6 +17,7 @@ import java.util.Set;
 public class LearningClassifierSystem {
 
     private int maxPopulationSize;
+    private int populationSize;
     private int nunmberOfActions;
     private int trainingExamples;
     private int conditionSize;
@@ -22,9 +26,14 @@ public class LearningClassifierSystem {
     private Set<Classifier> population;
     private Set<Classifier> matchSet;
     private Set<Classifier> actionSet;
+    private Selection selection;
+    private Crossover crossover;
+    private Mutation mutation;
 
-    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, int trainingExamples, Environment environment) {
+    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, int trainingExamples, Environment environment,
+                                    Selection selection, Crossover crossover, Mutation mutation) {
         this.maxPopulationSize = maxPopulationSize;
+        this.populationSize = 0;
         this.nunmberOfActions = numberOfActions;
         this.trainingExamples = trainingExamples;
         this.conditionSize = conditionSize;
@@ -33,6 +42,9 @@ public class LearningClassifierSystem {
         this.population = new HashSet<Classifier>();
         this.matchSet = new HashSet<Classifier>();
         this.actionSet = new HashSet<Classifier>();
+        this.selection = selection;
+        this.crossover = crossover;
+        this.mutation = mutation;
     }
 
     private Classifier coveringOperation(boolean[] input, double action) {
@@ -93,16 +105,15 @@ public class LearningClassifierSystem {
 
     private double[] calculatePredictionArray() {
         double[] predictionArray = new double[nunmberOfActions];
-
-        double[][] params = new double[nunmberOfActions][2];
+        double[] fitnessSumArray = new double[nunmberOfActions];
 
         for (Classifier cl : matchSet) {
-            params[(int)Math.round(cl.getAction())][0] = params[(int)Math.round(cl.getAction())][0] + cl.getPrediction() * cl.getFitness() * cl.getNumerosity();
-            params[(int)Math.round(cl.getAction())][1] = params[(int)Math.round(cl.getAction())][1] + cl.getFitness() * cl.getNumerosity();
+            predictionArray[(int)Math.round(cl.getAction())] = predictionArray[(int)Math.round(cl.getAction())] + cl.getPrediction() * cl.getFitness();
+            fitnessSumArray[(int)Math.round(cl.getAction())] = fitnessSumArray[(int)Math.round(cl.getAction())] + cl.getFitness();
         }
 
         for (int i = 0; i < nunmberOfActions; i++) {
-            predictionArray[i] = params[i][0] / params[i][1];
+            predictionArray[i] = predictionArray[i] / fitnessSumArray[i];
         }
 
         return predictionArray;
@@ -122,7 +133,7 @@ public class LearningClassifierSystem {
         for (int i = 0, l = predictionArray.length; i < l; i++) {
             sum += predictionArray[i];
 
-            if (r <= sum) {
+            if (r < sum) {
                 action = i;
 
                 break;
@@ -147,11 +158,10 @@ public class LearningClassifierSystem {
         int actionSetSize = 0;
 
         for (Classifier cl : actionSet) {
+            cl.updateExperience();
             cl.updatePrediction(reward);
             cl.updatePredictionError(reward);
             cl.updateAccuracy();
-            cl.updateTimestamp(time);
-            cl.updateExperience();
 
             actionSetSize += cl.getNumerosity();
 
@@ -163,6 +173,81 @@ public class LearningClassifierSystem {
             cl.updateFitness();
             cl.updateActionSetSize(actionSetSize);
         }
+    }
+
+    private void insertIntoPopulation(Classifier cl) {
+        for (Classifier c : population) {
+            if (cl.equals(c)) {
+                c.setNumerosity(c.getNumerosity() + 1);
+
+                return;
+            }
+        }
+
+        population.add(cl);
+    }
+
+    private void geneticAlgorithm(boolean[] input) {
+        int timeStampSum = 0;
+        int actionSetSize = 0;
+
+        for (Classifier cl : actionSet) {
+            timeStampSum += cl.getTimeStamp() * cl.getNumerosity();
+            actionSetSize += cl.getNumerosity();
+        }
+
+        if (time - (double)timeStampSum / actionSetSize <= Constants.GA_APPLICATION_THRESHOLD) {
+            return;
+        }
+
+        for (Classifier cl : actionSet) {
+            cl.updateTimestamp(time);
+        }
+
+        Classifier[] clArray = new Classifier[population.size()];
+        clArray = population.toArray(clArray);
+
+        Classifier p1 = selection.selectParent(clArray, Constants.TOURNAMENT_SIZE_RATIO);
+        Classifier p2 = selection.selectParent(clArray, Constants.TOURNAMENT_SIZE_RATIO);
+
+        Classifier c1 = p1.deepCopy();
+        Classifier c2 = p2.deepCopy();
+
+        c1.setNumerosity(1);
+        c2.setNumerosity(1);
+
+        c1.setExperience(0);
+        c2.setExperience(0);
+
+        if (RandomNumberGenerator.nextDouble() < Constants.CROSSOVER_PROBABILITY) {
+            crossover.crossoverOperation(c1, c2);
+
+            double newPrediction = (p1.getPrediction() + p2.getPrediction()) / 2.;
+
+            c1.setPrediction(newPrediction);
+            c2.setPrediction(newPrediction);
+
+            double newPredictionError = (p1.getPredictionError() + p2.getPredictionError()) / 2.;
+
+            c1.setPredictionError(newPredictionError);
+            c2.setPredictionError(newPredictionError);
+
+            double newFitness = (p1.getFitness() + p2.getFitness()) / 2.;
+
+            c1.setFitness(newFitness);
+            c2.setFitness(newFitness);
+        }
+
+        c1.setFitness(c1.getFitness() * Constants.FITNESS_REDUCTION);
+        c2.setFitness(c2.getFitness() * Constants.FITNESS_REDUCTION);
+        c1.setPredictionError(c1.getPredictionError() * Constants.PREDICTION_ERROR_REDUCTION);
+        c2.setPredictionError(c2.getPredictionError() * Constants.PREDICTION_ERROR_REDUCTION);
+
+        mutation.mutationOperation(c1, input);
+        mutation.mutationOperation(c2, input);
+
+        insertIntoPopulation(c1);
+        insertIntoPopulation(c2);
     }
 
     public void explore() {
@@ -184,6 +269,8 @@ public class LearningClassifierSystem {
             double reward = environment.getReward(action);
 
             updateParameters(reward);
+
+            geneticAlgorithm(input);
         }
     }
 

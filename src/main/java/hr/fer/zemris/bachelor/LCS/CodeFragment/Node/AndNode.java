@@ -11,6 +11,10 @@ public class AndNode extends BinaryNode {
         return left.getValue(input) && right.getValue(input);
     }
 
+    public Node deepCopy() {
+        return new AndNode(left.deepCopy(), right.deepCopy());
+    }
+
     String getOperator() {
         return "&";
     }

@@ -15,5 +15,8 @@ public class Constants {
     public static final double FITNESS_EXPONENT = 5;
     public static final double PREDICTION_ERROR_REDUCTION = 0.25;
     public static final double FITNESS_REDUCTION = 0.1;
+    public static final double GA_APPLICATION_THRESHOLD = 25;
+    public static final double TOURNAMENT_SIZE_RATIO = 0.4;
+    public static final double CROSSOVER_PROBABILITY = 0.8;
 
 }

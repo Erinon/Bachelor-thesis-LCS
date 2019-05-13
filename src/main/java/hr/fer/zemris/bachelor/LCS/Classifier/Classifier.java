@@ -17,7 +17,7 @@ public class Classifier {
     private double fitness;
     private double accuracy;
     private double relativeAccuracy;
-    private double timeStamp;
+    private int timeStamp;
     private int experience;
     private double actionSetSize;
     private int numerosity;
@@ -34,9 +34,31 @@ public class Classifier {
         this.fitness = 0.;
         this.accuracy = 0.;
         this.relativeAccuracy = 0.;
+        this.timeStamp = 0;
         this.experience = 0;
         this.actionSetSize = 0.;
         this.numerosity = 1;
+    }
+
+    private Classifier(int conditionSize, double action, double prediction, double predictionError, double fitness, int timeStamp, double actionSetSize) {
+        this(conditionSize);
+
+        this.action = action;
+        this.prediction = prediction;
+        this.predictionError = predictionError;
+        this.fitness = fitness;
+        this.timeStamp = timeStamp;
+        this.actionSetSize = actionSetSize;
+    }
+
+    public Classifier deepCopy() {
+        Classifier cl = new Classifier(conditionSize, action, prediction, predictionError, fitness, timeStamp, actionSetSize);
+
+        for (int i = 0; i < conditionSize; i++) {
+            cl.setCondition(i, condition[i].deepCopy());
+        }
+
+        return cl;
     }
 
     public void updatePrediction(double reward) {
@@ -60,7 +82,7 @@ public class Classifier {
     }
 
     public void updateFitness() {
-        fitness = fitness + Constants.LEARNING_RATE * (relativeAccuracy - fitness);
+        fitness = fitness + Constants.LEARNING_RATE * (relativeAccuracy * numerosity - fitness);
     }
 
     public void updateTimestamp(int timeStamp) {
@@ -72,7 +94,27 @@ public class Classifier {
     }
 
     public void updateActionSetSize(int lastSize) {
-        actionSetSize = actionSetSize * (1. - 1. / experience) + (double)lastSize / experience;
+        actionSetSize = actionSetSize + Constants.LEARNING_RATE * (lastSize - actionSetSize);
+    }
+
+    public void setAccuracy(double accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public void setRelativeAccuracy(double relativeAccuracy) {
+        this.relativeAccuracy = relativeAccuracy;
+    }
+
+    public void setTimeStamp(int timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void setExperience(int experience) {
+        this.experience = experience;
+    }
+
+    public void setActionSetSize(double actionSetSize) {
+        this.actionSetSize = actionSetSize;
     }
 
     public double getRelativeAccuracy() {

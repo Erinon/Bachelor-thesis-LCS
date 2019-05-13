@@ -11,6 +11,10 @@ public class OrNode extends BinaryNode {
         return left.getValue(input) || right.getValue(input);
     }
 
+    public Node deepCopy() {
+        return new OrNode(left.deepCopy(), right.deepCopy());
+    }
+
     String getOperator() {
         return "|";
     }

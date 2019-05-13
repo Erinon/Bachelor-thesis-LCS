@@ -8,4 +8,6 @@ public abstract class Node {
     @Override
     public abstract boolean equals(Object obj);
 
+    public abstract Node deepCopy();
+
 }

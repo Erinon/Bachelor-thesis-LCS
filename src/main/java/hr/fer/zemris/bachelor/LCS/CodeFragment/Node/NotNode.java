@@ -10,6 +10,10 @@ public class NotNode extends UnaryNode {
         return !child.getValue(input);
     }
 
+    public Node deepCopy() {
+        return new NotNode(child.deepCopy());
+    }
+
     String getOperator() {
         return "~";
     }

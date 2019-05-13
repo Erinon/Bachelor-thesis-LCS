@@ -17,6 +17,10 @@ public class CodeFragment {
         this.rootNode = rootNode;
     }
 
+    public CodeFragment deepCopy() {
+        return new CodeFragment(rootNode.deepCopy());
+    }
+
     private static Node getRandomSubtree(int depth, int inputSize) {
         if (depth <= 0) {
             return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
