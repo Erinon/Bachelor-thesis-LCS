@@ -4,7 +4,6 @@ import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.Classifier.Classifier;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 import hr.fer.zemris.bachelor.LCS.Environment.Environment;
-import hr.fer.zemris.bachelor.LCS.Environment.MuxEnvironment;
 import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 import java.util.HashMap;
@@ -18,18 +17,19 @@ public class LearningClassifierSystem {
     private int nunmberOfActions;
     private int trainingExamples;
     private int conditionSize;
+    private int time;
     private Environment environment;
     private Set<Classifier> population;
     private Set<Classifier> matchSet;
     private Set<Classifier> actionSet;
 
-
-    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, int trainingExamples) {
+    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, int trainingExamples, Environment environment) {
         this.maxPopulationSize = maxPopulationSize;
         this.nunmberOfActions = numberOfActions;
         this.trainingExamples = trainingExamples;
         this.conditionSize = conditionSize;
-        this.environment = new MuxEnvironment(conditionSize);
+        this.time = 0;
+        this.environment = environment;
         this.population = new HashSet<Classifier>();
         this.matchSet = new HashSet<Classifier>();
         this.actionSet = new HashSet<Classifier>();
@@ -97,8 +97,8 @@ public class LearningClassifierSystem {
         double[][] params = new double[nunmberOfActions][2];
 
         for (Classifier cl : matchSet) {
-            params[(int)Math.round(cl.getAction())][0] = params[(int)Math.round(cl.getAction())][0] + cl.getPrediction() * cl.getFitness();
-            params[(int)Math.round(cl.getAction())][1] = params[(int)Math.round(cl.getAction())][1] + cl.getFitness();
+            params[(int)Math.round(cl.getAction())][0] = params[(int)Math.round(cl.getAction())][0] + cl.getPrediction() * cl.getFitness() * cl.getNumerosity();
+            params[(int)Math.round(cl.getAction())][1] = params[(int)Math.round(cl.getAction())][1] + cl.getFitness() * cl.getNumerosity();
         }
 
         for (int i = 0; i < nunmberOfActions; i++) {
@@ -143,11 +143,32 @@ public class LearningClassifierSystem {
     }
 
     private void updateParameters(double reward) {
-        
+        double accuracySum = 0.;
+        int actionSetSize = 0;
+
+        for (Classifier cl : actionSet) {
+            cl.updatePrediction(reward);
+            cl.updatePredictionError(reward);
+            cl.updateAccuracy();
+            cl.updateTimestamp(time);
+            cl.updateExperience();
+
+            actionSetSize += cl.getNumerosity();
+
+            accuracySum += cl.getAccuracy() * cl.getNumerosity();
+        }
+
+        for (Classifier cl : actionSet) {
+            cl.updateRelativeAccuracy(accuracySum);
+            cl.updateFitness();
+            cl.updateActionSetSize(actionSetSize);
+        }
     }
 
     public void explore() {
         for (int i = 0; i < trainingExamples; i++) {
+            time++;
+
             boolean[] input = environment.getInput();
 
             Map<Double, Integer> matchedActions = matchClassifiers(input);
@@ -161,6 +182,8 @@ public class LearningClassifierSystem {
             formActionSet(action);
 
             double reward = environment.getReward(action);
+
+            updateParameters(reward);
         }
     }
 

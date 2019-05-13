@@ -1,5 +1,6 @@
 package hr.fer.zemris.bachelor.LCS.Classifier;
 
+import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
 import java.util.Arrays;
@@ -14,6 +15,11 @@ public class Classifier {
     private double prediction;
     private double predictionError;
     private double fitness;
+    private double accuracy;
+    private double relativeAccuracy;
+    private double timeStamp;
+    private int experience;
+    private double actionSetSize;
     private int numerosity;
 
     public Classifier(int conditionSize) {
@@ -23,10 +29,86 @@ public class Classifier {
 
         this.conditionSize = conditionSize;
         this.condition = new CodeFragment[conditionSize];
+        this.prediction = 0.;
+        this.predictionError = 0.;
+        this.fitness = 0.;
+        this.accuracy = 0.;
+        this.relativeAccuracy = 0.;
+        this.experience = 0;
+        this.actionSetSize = 0.;
+        this.numerosity = 1;
+    }
+
+    public void updatePrediction(double reward) {
+        prediction = prediction + Constants.LEARNING_RATE * (reward - prediction);
+    }
+
+    public void updatePredictionError(double reward) {
+        predictionError = predictionError + Constants.LEARNING_RATE * (Math.abs(reward - prediction) - predictionError);
+    }
+
+    public void updateAccuracy() {
+        if (predictionError < Constants.PREDICTION_ERROR_THRESHOLD) {
+            accuracy = 1.;
+        } else {
+            accuracy = Constants.FITNESS_FALL_OFF_RATE * Math.pow(predictionError / Constants.PREDICTION_ERROR_THRESHOLD, -Constants.FITNESS_EXPONENT);
+        }
+    }
+
+    public void updateRelativeAccuracy(double accuracySum) {
+        relativeAccuracy = accuracy / accuracySum;
+    }
+
+    public void updateFitness() {
+        fitness = fitness + Constants.LEARNING_RATE * (relativeAccuracy - fitness);
+    }
+
+    public void updateTimestamp(int timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void updateExperience() {
+        experience++;
+    }
+
+    public void updateActionSetSize(int lastSize) {
+        actionSetSize = actionSetSize * (1. - 1. / experience) + (double)lastSize / experience;
+    }
+
+    public double getRelativeAccuracy() {
+        return relativeAccuracy;
+    }
+
+    public double getTimeStamp() {
+        return timeStamp;
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public double getActionSetSize() {
+        return actionSetSize;
+    }
+
+    public double getAccuracy() {
+        return accuracy;
     }
 
     public int getNumerosity() {
         return numerosity;
+    }
+
+    public void setPrediction(double prediction) {
+        this.prediction = prediction;
+    }
+
+    public void setPredictionError(double predictionError) {
+        this.predictionError = predictionError;
+    }
+
+    public void setNumerosity(int numerosity) {
+        this.numerosity = numerosity;
     }
 
     public double getPrediction() {
