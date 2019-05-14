@@ -1,6 +1,5 @@
 package hr.fer.zemris.bachelor.LCS.Classifier;
 
-import com.sun.corba.se.impl.orbutil.closure.Constant;
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
@@ -62,8 +61,22 @@ public class Classifier {
         return cl;
     }
 
+    public double deletionVote(double averageFitness) {
+        double vote = actionSetSize * numerosity;
+
+        if (experience > Constants.DELETION_EXPERIENCE_THRESHOLD && fitness / numerosity < Constants.DELETION_FRACTION_OF_MEAN_FITNESS * averageFitness) {
+            vote *= averageFitness * numerosity / fitness;
+        }
+
+        return vote;
+    }
+
     public boolean couldSubsume() {
         return experience > Constants.SUBSUMPTION_EXPERIENCE_THRESHOLD && predictionError < Constants.PREDICTION_ERROR_THRESHOLD;
+    }
+
+    public boolean doesSubsume(Classifier cl) {
+        return action == cl.action && couldSubsume() && isMoreGeneral(cl);
     }
 
     public void updatePrediction(double reward) {
@@ -210,7 +223,7 @@ public class Classifier {
         this.action = action;
     }
 
-    private int getNumberOfDontCareCodeFragments() {
+    public int getNumberOfDontCareCodeFragments() {
         int n = 0;
 
         for (CodeFragment cf : condition) {

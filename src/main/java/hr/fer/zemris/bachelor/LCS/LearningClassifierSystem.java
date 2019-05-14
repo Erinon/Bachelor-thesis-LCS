@@ -98,6 +98,8 @@ public class LearningClassifierSystem {
                 population.add(cover);
                 matchSet.add(cover);
 
+                populationSize++;
+
                 matchedActions.put(action, 1);
             }
         }
@@ -176,6 +178,8 @@ public class LearningClassifierSystem {
     }
 
     private void insertIntoPopulation(Classifier cl) {
+        populationSize++;
+
         for (Classifier c : population) {
             if (cl.equals(c)) {
                 c.setNumerosity(c.getNumerosity() + 1);
@@ -248,30 +252,114 @@ public class LearningClassifierSystem {
 
         insertIntoPopulation(c1);
         insertIntoPopulation(c2);
+
+        deleteFromPopulation();
+        deleteFromPopulation();
+    }
+
+    private void deleteFromPopulation() {
+        if (populationSize <= maxPopulationSize) {
+            return;
+        }
+
+        double fitnessSum = 0.;
+
+        for (Classifier cl : population) {
+            fitnessSum += cl.getFitness();
+        }
+
+        double averageFitness = fitnessSum / populationSize;
+
+        double voteSum = 0.;
+
+        for (Classifier cl : population) {
+            voteSum += cl.deletionVote(averageFitness);
+        }
+
+        double choicePoint = RandomNumberGenerator.nextDouble(0, voteSum);
+        voteSum = 0.;
+
+        for (Classifier cl : population) {
+            voteSum += cl.deletionVote(averageFitness);
+
+            if (choicePoint < voteSum) {
+                if (cl.getNumerosity() > 1) {
+                    cl.setNumerosity(cl.getNumerosity() - 1);
+                } else {
+                    population.remove(cl);
+                    actionSet.remove(cl);
+                }
+
+                populationSize--;
+
+                return;
+            }
+        }
+    }
+
+    private void actionSetSubsumption() {
+        Classifier c = null;
+        int numDontCareC = 0;
+        int numDontCareCl;
+
+        for (Classifier cl : actionSet) {
+            if (cl.couldSubsume()) {
+                numDontCareCl = cl.getNumberOfDontCareCodeFragments();
+
+                if (c == null || numDontCareCl > numDontCareC ||
+                        (numDontCareCl == numDontCareC && RandomNumberGenerator.nextDouble() < 0.5)) {
+                    c = cl;
+                    numDontCareC = numDontCareCl;
+                }
+            }
+        }
+
+        if (c != null) {
+            for (Classifier cl : actionSet) {
+                if (c.isMoreGeneral(cl)) {
+                    c.setNumerosity(c.getNumerosity() + cl.getNumerosity());
+
+                    population.remove(cl);
+                    actionSet.remove(cl);
+                }
+            }
+        }
     }
 
     public void explore() {
-        for (int i = 0; i < trainingExamples; i++) {
-            time++;
+        time++;
 
-            boolean[] input = environment.getInput();
+        boolean[] input = environment.getInput();
 
-            Map<Double, Integer> matchedActions = matchClassifiers(input);
+        Map<Double, Integer> matchedActions = matchClassifiers(input);
 
-            coverActions(input, matchedActions);
+        coverActions(input, matchedActions);
 
-            double[] predictionArray = calculatePredictionArray();
+        double[] predictionArray = calculatePredictionArray();
 
-            double action = selectAction(predictionArray);
+        double action = selectAction(predictionArray);
 
-            formActionSet(action);
+        formActionSet(action);
 
-            double reward = environment.getReward(action);
+        double reward = environment.getReward(action);
 
-            updateParameters(reward);
+        updateParameters(reward);
 
-            geneticAlgorithm(input);
-        }
+        geneticAlgorithm(input);
+
+        actionSetSubsumption();
+    }
+
+    public double exploit() {
+        boolean[] input = environment.getInput();
+
+        Map<Double, Integer> matchedActions = matchClassifiers(input);
+
+        coverActions(input, matchedActions);
+
+        double[] predictionArray = calculatePredictionArray();
+
+        return selectAction(predictionArray);
     }
 
 }
