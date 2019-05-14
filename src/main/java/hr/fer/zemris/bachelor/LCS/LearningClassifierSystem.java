@@ -326,18 +326,12 @@ public class LearningClassifierSystem {
         }
     }
 
-    public void explore() {
+    public double explore() {
         time++;
 
         boolean[] input = environment.getInput();
 
-        Map<Double, Integer> matchedActions = matchClassifiers(input);
-
-        coverActions(input, matchedActions);
-
-        double[] predictionArray = calculatePredictionArray();
-
-        double action = selectAction(predictionArray);
+        double action = exploit(input);
 
         formActionSet(action);
 
@@ -348,11 +342,11 @@ public class LearningClassifierSystem {
         geneticAlgorithm(input);
 
         actionSetSubsumption();
+
+        return action;
     }
 
-    public double exploit() {
-        boolean[] input = environment.getInput();
-
+    public double exploit(boolean[] input) {
         Map<Double, Integer> matchedActions = matchClassifiers(input);
 
         coverActions(input, matchedActions);

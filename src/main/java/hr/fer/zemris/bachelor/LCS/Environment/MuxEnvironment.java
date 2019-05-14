@@ -28,4 +28,8 @@ public class MuxEnvironment implements Environment {
         }
     }
 
+    public boolean checkOutput(double output) {
+        return output == currentDataPiece.getOutput();
+    }
+
 }

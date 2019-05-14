@@ -4,5 +4,6 @@ public interface Environment {
 
     boolean[] getInput();
     double getReward(double action);
+    boolean checkOutput(double output);
 
 }
