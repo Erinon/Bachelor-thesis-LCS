@@ -18,5 +18,6 @@ public class Constants {
     public static final double GA_APPLICATION_THRESHOLD = 25;
     public static final double TOURNAMENT_SIZE_RATIO = 0.4;
     public static final double CROSSOVER_PROBABILITY = 0.8;
+    public static final double SUBSUMPTION_EXPERIENCE_THRESHOLD = 20;
 
 }

@@ -1,5 +1,6 @@
 package hr.fer.zemris.bachelor.LCS.Classifier;
 
+import com.sun.corba.se.impl.orbutil.closure.Constant;
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
@@ -61,12 +62,24 @@ public class Classifier {
         return cl;
     }
 
+    public boolean couldSubsume() {
+        return experience > Constants.SUBSUMPTION_EXPERIENCE_THRESHOLD && predictionError < Constants.PREDICTION_ERROR_THRESHOLD;
+    }
+
     public void updatePrediction(double reward) {
-        prediction = prediction + Constants.LEARNING_RATE * (reward - prediction);
+        if (experience < 1. / Constants.LEARNING_RATE) {
+            prediction = prediction + (reward - prediction) / experience;
+        } else {
+            prediction = prediction + Constants.LEARNING_RATE * (reward - prediction);
+        }
     }
 
     public void updatePredictionError(double reward) {
-        predictionError = predictionError + Constants.LEARNING_RATE * (Math.abs(reward - prediction) - predictionError);
+        if (experience < 1. / Constants.LEARNING_RATE) {
+            predictionError = predictionError + (Math.abs(reward - prediction) - predictionError) / experience;
+        } else {
+            predictionError = predictionError + Constants.LEARNING_RATE * (Math.abs(reward - prediction) - predictionError);
+        }
     }
 
     public void updateAccuracy() {
@@ -94,7 +107,11 @@ public class Classifier {
     }
 
     public void updateActionSetSize(int lastSize) {
-        actionSetSize = actionSetSize + Constants.LEARNING_RATE * (lastSize - actionSetSize);
+        if (experience < 1. / Constants.LEARNING_RATE) {
+            actionSetSize = actionSetSize + (lastSize - actionSetSize) / experience;
+        } else {
+            actionSetSize = actionSetSize + Constants.LEARNING_RATE * (lastSize - actionSetSize);
+        }
     }
 
     public void setAccuracy(double accuracy) {
