@@ -21,5 +21,6 @@ public class Constants {
     public static final double SUBSUMPTION_EXPERIENCE_THRESHOLD = 20;
     public static final double DELETION_EXPERIENCE_THRESHOLD = 20;
     public static final double DELETION_FRACTION_OF_MEAN_FITNESS = 0.1;
+    public static final double REUSE_EXPERIENCE_THRESHOLD = 20;
 
 }

@@ -33,7 +33,7 @@ public class FragmentTester {
         System.out.println(cf.evaluate(input));
         System.out.println(cf.toString());
 
-        for (int i = 0; i < 5; i++) {
+        /*for (int i = 0; i < 5; i++) {
             CodeFragment cf1 = CodeFragment.getRandomFragment(input);
             System.out.println(cf1 + " -> " + cf1.evaluate(input));
         }
@@ -47,7 +47,7 @@ public class FragmentTester {
             if (cf1.equals(cf2)) {
                 System.out.println(cf1 + "  " + cf2);
             }
-        }
+        }*/
     }
 
 }

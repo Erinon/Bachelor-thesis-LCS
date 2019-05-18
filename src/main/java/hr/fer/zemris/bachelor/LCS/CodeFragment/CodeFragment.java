@@ -21,9 +21,13 @@ public class CodeFragment {
         return new CodeFragment(rootNode.deepCopy());
     }
 
-    private static Node getRandomSubtree(int depth, int inputSize) {
+    private static Node getRandomSubtree(int depth, int inputSize, CodeFragment[] reusedFragments, int rfLen) {
         if (depth <= 0) {
-            return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
+            if (RandomNumberGenerator.nextDouble() < 0.5 && rfLen > 0) {
+                return reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
+            } else {
+                return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
+            }
         }
 
         Node node = null;
@@ -33,26 +37,26 @@ public class CodeFragment {
                 switch (RandomNumberGenerator.nextInt(0, 3)) {
                     case 0:
                         node = new AndNode(
-                                getRandomSubtree(depth - 1, inputSize),
-                                getRandomSubtree(depth - 1, inputSize)
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen),
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen)
                         );
                         break;
                     case 1:
                         node = new NandNode(
-                                getRandomSubtree(depth - 1, inputSize),
-                                getRandomSubtree(depth - 1, inputSize)
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen),
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen)
                         );
                         break;
                     case 2:
                         node = new NorNode(
-                                getRandomSubtree(depth - 1, inputSize),
-                                getRandomSubtree(depth - 1, inputSize)
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen),
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen)
                         );
                         break;
                     case 3:
                         node = new OrNode(
-                                getRandomSubtree(depth - 1, inputSize),
-                                getRandomSubtree(depth - 1, inputSize)
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen),
+                                getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen)
                         );
                         break;
                     default:
@@ -60,10 +64,14 @@ public class CodeFragment {
                 }
                 break;
             case 1:
-                node = new NotNode(getRandomSubtree(depth - 1, inputSize));
+                node = new NotNode(getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen));
                 break;
             case 2:
-                node = new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
+                if (RandomNumberGenerator.nextDouble() < 0.5 && rfLen > 0) {
+                    node = reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
+                } else {
+                    node = new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
+                }
                 break;
             default:
                 break;
@@ -72,8 +80,8 @@ public class CodeFragment {
         return node;
     }
 
-    public static CodeFragment getRandomFragment(boolean[] input) {
-        return new CodeFragment(getRandomSubtree(Constants.MAXIMUM_TREE_DEPTH, input.length));
+    public static CodeFragment getRandomFragment(boolean[] input, CodeFragment[] reusedFragments, int rfLen) {
+        return new CodeFragment(getRandomSubtree(Constants.MAXIMUM_TREE_DEPTH, input.length, reusedFragments, rfLen));
     }
 
     public static CodeFragment getDontCareFragment() {
@@ -103,6 +111,10 @@ public class CodeFragment {
     @Override
     public String toString() {
         return rootNode.toString();
+    }
+
+    public Node getRootNode() {
+        return rootNode;
     }
 
     @Override

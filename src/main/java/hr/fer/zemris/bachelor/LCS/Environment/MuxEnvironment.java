@@ -20,7 +20,7 @@ public class MuxEnvironment implements Environment {
         return currentDataPiece.getInput();
     }
 
-    public double getReward(double action) {
+    public double getReward(int action) {
         if (currentDataPiece.getOutput() == action) {
             return Constants.ENVIRONMENT_REWARD_CORRECT;
         } else {
@@ -28,7 +28,7 @@ public class MuxEnvironment implements Environment {
         }
     }
 
-    public boolean checkOutput(double output) {
+    public boolean checkOutput(int output) {
         return output == currentDataPiece.getOutput();
     }
 

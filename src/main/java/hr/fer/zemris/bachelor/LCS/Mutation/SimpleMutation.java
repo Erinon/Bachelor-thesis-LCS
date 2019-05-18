@@ -7,16 +7,16 @@ import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 public class SimpleMutation implements Mutation {
 
-    public void mutationOperation(Classifier cl, boolean[] input) {
+    public void mutationOperation(Classifier cl, boolean[] input, CodeFragment[] reusedFragments, int rfLen) {
         CodeFragment cf;
 
         for (int i = 0; i < cl.getConditionSize(); i++) {
             if (RandomNumberGenerator.nextDouble() < Constants.MUTATION_PROBABILITY) {
                 if (cl.getCondition(i).isDontCareFragment()) {
-                    cf = CodeFragment.getRandomFragment(input);
+                    cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
 
                     while (!cf.evaluate(input)) {
-                        cf = CodeFragment.getRandomFragment(input);
+                        cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
                     }
 
                     cl.setCondition(i, cf);

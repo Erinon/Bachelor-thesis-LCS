@@ -28,3 +28,5 @@ target/
 *.tar.gz
 *.rar
 
+# Bash script
+*.sh

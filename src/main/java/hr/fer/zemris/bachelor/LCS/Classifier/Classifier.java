@@ -11,7 +11,7 @@ public class Classifier {
 
     private CodeFragment[] condition;
     private int conditionSize;
-    private double action;
+    private int action;
     private double prediction;
     private double predictionError;
     private double fitness;
@@ -40,7 +40,7 @@ public class Classifier {
         this.numerosity = 1;
     }
 
-    private Classifier(int conditionSize, double action, double prediction, double predictionError, double fitness, int timeStamp, double actionSetSize) {
+    private Classifier(int conditionSize, int action, double prediction, double predictionError, double fitness, int timeStamp, double actionSetSize) {
         this(conditionSize);
 
         this.action = action;
@@ -127,6 +127,10 @@ public class Classifier {
         }
     }
 
+    public Set<CodeFragment> getCodeFragments() {
+        return new HashSet<CodeFragment>(Arrays.asList(condition));
+    }
+
     public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
@@ -209,7 +213,7 @@ public class Classifier {
         return condition[index];
     }
 
-    public double getAction() {
+    public int getAction() {
         return action;
     }
 
@@ -219,7 +223,7 @@ public class Classifier {
         this.condition[index] = codeFragment;
     }
 
-    public void setAction(double action) {
+    public void setAction(int action) {
         this.action = action;
     }
 

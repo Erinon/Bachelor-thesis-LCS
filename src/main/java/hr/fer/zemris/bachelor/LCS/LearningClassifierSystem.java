@@ -18,8 +18,7 @@ public class LearningClassifierSystem {
 
     private int maxPopulationSize;
     private int populationSize;
-    private int nunmberOfActions;
-    private int trainingExamples;
+    private int numberOfActions;
     private int conditionSize;
     private int time;
     private Environment environment;
@@ -29,13 +28,14 @@ public class LearningClassifierSystem {
     private Selection selection;
     private Crossover crossover;
     private Mutation mutation;
+    private CodeFragment[] reusedFragments;
+    private int rfLen;
 
-    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, int trainingExamples, Environment environment,
-                                    Selection selection, Crossover crossover, Mutation mutation) {
+    public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, Environment environment,
+                                    Selection selection, Crossover crossover, Mutation mutation, CodeFragment[] reusedFragments, int rfLen) {
         this.maxPopulationSize = maxPopulationSize;
         this.populationSize = 0;
-        this.nunmberOfActions = numberOfActions;
-        this.trainingExamples = trainingExamples;
+        this.numberOfActions = numberOfActions;
         this.conditionSize = conditionSize;
         this.time = 0;
         this.environment = environment;
@@ -45,9 +45,15 @@ public class LearningClassifierSystem {
         this.selection = selection;
         this.crossover = crossover;
         this.mutation = mutation;
+        this.reusedFragments = reusedFragments;
+        this.rfLen = rfLen;
     }
 
-    private Classifier coveringOperation(boolean[] input, double action) {
+    public int getPopulationSize() {
+        return populationSize;
+    }
+
+    private Classifier coveringOperation(boolean[] input, int action) {
         Classifier cl = new Classifier(conditionSize);
         CodeFragment cf;
 
@@ -55,10 +61,10 @@ public class LearningClassifierSystem {
             if (RandomNumberGenerator.nextDouble() < Constants.DONT_CARE_PROBABILITY) {
                 cl.setCondition(i, CodeFragment.getDontCareFragment());
             } else {
-                cf = CodeFragment.getRandomFragment(input);
+                cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
 
                 while (!cf.evaluate(input)) {
-                    cf = CodeFragment.getRandomFragment(input);
+                    cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
                 }
 
                 cl.setCondition(i, cf);
@@ -70,10 +76,42 @@ public class LearningClassifierSystem {
         return cl;
     }
 
-    private Map<Double, Integer> matchClassifiers(boolean[] input) {
-        Map<Double, Integer> matchedActions = new HashMap<Double, Integer>();
+    private void generateMatchSet(boolean[] input) {
+        int[] matchedActions = new int[numberOfActions];
 
-        for (double action = 0; action < nunmberOfActions; action++) {
+        matchSet.clear();
+
+        while (matchSet.isEmpty()) {
+            for (Classifier cl : population) {
+                if (cl.doesMatch(input)) {
+                    matchSet.add(cl);
+
+                    matchedActions[cl.getAction()] = matchedActions[cl.getAction()] + 1;
+                }
+            }
+
+            boolean found = false;
+
+            for (int a = 0; a < numberOfActions; a++) {
+                if (matchedActions[a] <= 0) {
+                    population.add(coveringOperation(input, a));
+
+                    deleteFromPopulation();
+
+                    found = true;
+                }
+            }
+
+            if (found) {
+                matchSet.clear();
+            }
+        }
+    }
+
+    private Map<Integer, Integer> matchClassifiers(boolean[] input) {
+        Map<Integer, Integer> matchedActions = new HashMap<Integer, Integer>();
+
+        for (int action = 0; action < numberOfActions; action++) {
             matchedActions.put(action, 0);
         }
 
@@ -90,8 +128,8 @@ public class LearningClassifierSystem {
         return matchedActions;
     }
 
-    private void coverActions(boolean[] input, Map<Double, Integer> matchedActions) {
-        for (double action : matchedActions.keySet()) {
+    private void coverActions(boolean[] input, Map<Integer, Integer> matchedActions) {
+        for (int action : matchedActions.keySet()) {
             if (action <= 0) {
                 Classifier cover = coveringOperation(input, action);
 
@@ -106,22 +144,22 @@ public class LearningClassifierSystem {
     }
 
     private double[] calculatePredictionArray() {
-        double[] predictionArray = new double[nunmberOfActions];
-        double[] fitnessSumArray = new double[nunmberOfActions];
+        double[] predictionArray = new double[numberOfActions];
+        double[] fitnessSumArray = new double[numberOfActions];
 
         for (Classifier cl : matchSet) {
-            predictionArray[(int)Math.round(cl.getAction())] = predictionArray[(int)Math.round(cl.getAction())] + cl.getPrediction() * cl.getFitness();
-            fitnessSumArray[(int)Math.round(cl.getAction())] = fitnessSumArray[(int)Math.round(cl.getAction())] + cl.getFitness();
+            predictionArray[cl.getAction()] = predictionArray[cl.getAction()] + cl.getPrediction() * cl.getFitness();
+            fitnessSumArray[cl.getAction()] = fitnessSumArray[cl.getAction()] + cl.getFitness();
         }
 
-        for (int i = 0; i < nunmberOfActions; i++) {
+        for (int i = 0; i < numberOfActions; i++) {
             predictionArray[i] = predictionArray[i] / fitnessSumArray[i];
         }
 
         return predictionArray;
     }
 
-    private double selectAction(double[] predictionArray) {
+    private int selectAction(double[] predictionArray) {
         double sum = 0;
 
         for (double p : predictionArray) {
@@ -145,7 +183,7 @@ public class LearningClassifierSystem {
         return action;
     }
 
-    private void formActionSet(double action) {
+    private void formActionSet(int action) {
         actionSet.clear();
 
         for (Classifier cl : matchSet) {
@@ -247,13 +285,28 @@ public class LearningClassifierSystem {
         c1.setPredictionError(c1.getPredictionError() * Constants.PREDICTION_ERROR_REDUCTION);
         c2.setPredictionError(c2.getPredictionError() * Constants.PREDICTION_ERROR_REDUCTION);
 
-        mutation.mutationOperation(c1, input);
-        mutation.mutationOperation(c2, input);
+        mutation.mutationOperation(c1, input, reusedFragments, rfLen);
 
-        insertIntoPopulation(c1);
-        insertIntoPopulation(c2);
+        if (p1.doesSubsume(c1)) {
+            p1.setNumerosity(p1.getNumerosity() + 1);
+        } else if (p2.doesSubsume(c1)) {
+            p2.setNumerosity(p2.getNumerosity() + 1);
+        } else {
+            insertIntoPopulation(c1);
+        }
 
         deleteFromPopulation();
+
+        mutation.mutationOperation(c2, input, reusedFragments, rfLen);
+
+        if (p1.doesSubsume(c2)) {
+            p1.setNumerosity(p1.getNumerosity() + 1);
+        } else if (p2.doesSubsume(c2)) {
+            p2.setNumerosity(p2.getNumerosity() + 1);
+        } else {
+            insertIntoPopulation(c2);
+        }
+
         deleteFromPopulation();
     }
 
@@ -287,6 +340,7 @@ public class LearningClassifierSystem {
                     cl.setNumerosity(cl.getNumerosity() - 1);
                 } else {
                     population.remove(cl);
+                    matchSet.remove(cl);
                     actionSet.remove(cl);
                 }
 
@@ -320,10 +374,34 @@ public class LearningClassifierSystem {
                     c.setNumerosity(c.getNumerosity() + cl.getNumerosity());
 
                     population.remove(cl);
-                    actionSet.remove(cl);
+                    //actionSet.remove(cl);
                 }
             }
         }
+    }
+
+    public CodeFragment[] getCodeFragments() {
+        Set<CodeFragment> fragSet = new HashSet<CodeFragment>();
+
+        double fitnessSum = 0.;
+
+        for (Classifier cl : population) {
+            fitnessSum += cl.getFitness();
+        }
+
+        double fitnessAvg = fitnessSum / populationSize;
+
+        for (Classifier cl : population) {
+            if (cl.getExperience() > Constants.REUSE_EXPERIENCE_THRESHOLD && cl.getFitness() > fitnessAvg) {
+                fragSet.addAll(cl.getCodeFragments());
+            }
+        }
+
+        CodeFragment[] frags = new CodeFragment[fragSet.size()];
+
+        fragSet.toArray(frags);
+
+        return frags;
     }
 
     public double explore() {
@@ -331,7 +409,7 @@ public class LearningClassifierSystem {
 
         boolean[] input = environment.getInput();
 
-        double action = exploit(input);
+        int action = exploit(input);
 
         formActionSet(action);
 
@@ -346,10 +424,11 @@ public class LearningClassifierSystem {
         return action;
     }
 
-    public double exploit(boolean[] input) {
-        Map<Double, Integer> matchedActions = matchClassifiers(input);
+    public int exploit(boolean[] input) {
+        generateMatchSet(input);
+        /*Map<Double, Integer> matchedActions = matchClassifiers(input);
 
-        coverActions(input, matchedActions);
+        coverActions(input, matchedActions);*/
 
         double[] predictionArray = calculatePredictionArray();
 
