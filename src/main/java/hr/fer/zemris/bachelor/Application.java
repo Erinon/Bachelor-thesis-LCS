@@ -6,7 +6,7 @@ import hr.fer.zemris.bachelor.Trainer.Trainer;
 public class Application {
 
     public static void main(String[] args) {
-        Trainer trainer = new MuxTrainer(4);
+        Trainer trainer = new MuxTrainer(2);
 
         trainer.train();
     }
