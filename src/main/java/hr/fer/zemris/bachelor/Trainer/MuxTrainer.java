@@ -75,7 +75,7 @@ public class MuxTrainer implements Trainer {
 
                     results.get(i).add(new double[] {j, sum / testNumber});
 
-                    System.out.println("Run " + j + ":\t\t" + sum / testNumber);
+                    System.out.println("Run " + j + ":\t" + sum / testNumber);
                     //System.out.println("Population size: " + lcs.getPopulationSize());
                 }
             }
@@ -103,7 +103,7 @@ public class MuxTrainer implements Trainer {
                             new BufferedOutputStream(
                                     new FileOutputStream(current)), StandardCharsets.UTF_8))) {
                 for (double[] p : results.get(key)) {
-                    bw.write(p[0] / 1000 + " " + p[1] + "\n");
+                    bw.write(p[0] / 1000 + " " + p[1] * 100 + "\n");
                 }
             } catch (IOException ignored) {
             }

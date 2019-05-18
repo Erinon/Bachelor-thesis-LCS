@@ -6,7 +6,13 @@ import hr.fer.zemris.bachelor.Trainer.Trainer;
 public class Application {
 
     public static void main(String[] args) {
-        Trainer trainer = new MuxTrainer(2);
+        if (args.length != 1) {
+            throw new IllegalArgumentException();
+        }
+
+        int condBits = Integer.parseInt(args[0]);
+
+        Trainer trainer = new MuxTrainer(condBits);
 
         trainer.train();
     }
