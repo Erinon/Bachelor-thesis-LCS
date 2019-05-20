@@ -1,5 +1,7 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
+import java.util.Objects;
+
 public class TerminalNode extends Node {
 
     private int index;
@@ -29,6 +31,11 @@ public class TerminalNode extends Node {
         TerminalNode that = (TerminalNode) obj;
 
         return index == that.index;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(index);
     }
 
     public Node deepCopy() {

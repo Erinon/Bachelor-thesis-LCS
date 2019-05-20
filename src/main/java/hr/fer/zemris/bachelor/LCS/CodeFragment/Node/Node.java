@@ -8,6 +8,9 @@ public abstract class Node {
     @Override
     public abstract boolean equals(Object obj);
 
+    @Override
+    public abstract int hashCode();
+
     public abstract Node deepCopy();
 
 }

@@ -23,7 +23,7 @@ public class CodeFragment {
 
     private static Node getRandomSubtree(int depth, int inputSize, CodeFragment[] reusedFragments, int rfLen) {
         if (depth <= 0) {
-            if (RandomNumberGenerator.nextDouble() < 0.5 && rfLen > 0) {
+            if (rfLen > 0 && RandomNumberGenerator.nextDouble() < 0.5) {
                 return reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
             } else {
                 return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
@@ -67,7 +67,7 @@ public class CodeFragment {
                 node = new NotNode(getRandomSubtree(depth - 1, inputSize, reusedFragments, rfLen));
                 break;
             case 2:
-                if (RandomNumberGenerator.nextDouble() < 0.5 && rfLen > 0) {
+                if (rfLen > 0 && RandomNumberGenerator.nextDouble() < 0.5) {
                     node = reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
                 } else {
                     node = new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
@@ -101,7 +101,8 @@ public class CodeFragment {
             return true;
         }
 
-        return equals(dontCareFragment);
+        //return equals(dontCareFragment);
+        return false;
     }
 
     public boolean evaluate(boolean[] input) {
@@ -129,13 +130,12 @@ public class CodeFragment {
 
         CodeFragment that = (CodeFragment) obj;
 
-        //return rootNode.equals(that.rootNode);
-        return toString().equals(that.toString());
+        return rootNode.equals(that.rootNode);
     }
 
     @Override
     public int hashCode() {
-        return toString().hashCode();
+        return rootNode.hashCode();
     }
 
 }

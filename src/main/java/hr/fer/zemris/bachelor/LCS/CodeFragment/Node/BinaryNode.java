@@ -1,5 +1,7 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
+import java.util.Objects;
+
 public abstract class BinaryNode extends Node {
 
     Node left;
@@ -25,6 +27,11 @@ public abstract class BinaryNode extends Node {
         BinaryNode that = (BinaryNode) obj;
 
         return getOperator().equals(that.getOperator()) && left.equals(that.left) && right.equals(that.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, right);
     }
 
 }

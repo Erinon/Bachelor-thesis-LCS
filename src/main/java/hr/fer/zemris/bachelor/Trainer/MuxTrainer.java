@@ -47,7 +47,7 @@ public class MuxTrainer implements Trainer {
     }
 
     public void train() {
-        final int testNumber = 100;
+        final int testNumber = 30;
 
         for (int i = 2; i <= controlBits; i++) {
             results.put(i, new LinkedList<>());
@@ -56,7 +56,7 @@ public class MuxTrainer implements Trainer {
 
             Environment environment = new MuxEnvironment(i);
 
-            LearningClassifierSystem lcs = new LearningClassifierSystem(i, numberOfActions, populationSizes[i - 2],
+            LearningClassifierSystem lcs = new LearningClassifierSystem(conditionSize, numberOfActions, populationSizes[i - 2],
                     environment, selection, crossover, mutation, reusedFragments, rfLen);
 
             System.out.println("Training for " + conditionSize + " bits");
@@ -75,20 +75,24 @@ public class MuxTrainer implements Trainer {
 
                     results.get(i).add(new double[] {j, sum / testNumber});
 
-                    System.out.println("Run " + j + ":\t" + sum / testNumber);
+                    System.out.printf("Run %7d:\t%.2f\n", j, sum / testNumber);
                     //System.out.println("Population size: " + lcs.getPopulationSize());
                 }
             }
 
-            Set<CodeFragment> newFragments = new HashSet<CodeFragment>(Arrays.asList(reusedFragments));
+            Set<CodeFragment> newFragments = new HashSet<>(Arrays.asList(reusedFragments));
             newFragments.addAll(Arrays.asList(lcs.getCodeFragments()));
 
             reusedFragments = new CodeFragment[newFragments.size()];
             newFragments.toArray(reusedFragments);
 
-            for (CodeFragment cf : reusedFragments) {
+            lcs.printTimes();
+
+            //lcs.printClassifiers();
+
+            /*for (CodeFragment cf : reusedFragments) {
                 System.out.println(cf);
-            }
+            }*/
         }
 
         writeResults();

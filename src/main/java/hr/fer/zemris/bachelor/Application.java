@@ -12,6 +12,8 @@ public class Application {
 
         int condBits = Integer.parseInt(args[0]);
 
+        //condBits = 2;
+
         Trainer trainer = new MuxTrainer(condBits);
 
         trainer.train();

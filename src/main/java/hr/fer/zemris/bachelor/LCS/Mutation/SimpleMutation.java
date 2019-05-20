@@ -7,17 +7,15 @@ import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
 public class SimpleMutation implements Mutation {
 
-    public void mutationOperation(Classifier cl, boolean[] input, CodeFragment[] reusedFragments, int rfLen) {
+    public void mutationOperation(Classifier cl, boolean[] input, int numOfActions, CodeFragment[] reusedFragments, int rfLen) {
         CodeFragment cf;
 
         for (int i = 0; i < cl.getConditionSize(); i++) {
             if (RandomNumberGenerator.nextDouble() < Constants.MUTATION_PROBABILITY) {
                 if (cl.getCondition(i).isDontCareFragment()) {
-                    cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
-
-                    while (!cf.evaluate(input)) {
+                    do {
                         cf = CodeFragment.getRandomFragment(input, reusedFragments, rfLen);
-                    }
+                    } while (!cf.evaluate(input));
 
                     cl.setCondition(i, cf);
                 } else {
@@ -26,8 +24,14 @@ public class SimpleMutation implements Mutation {
             }
         }
 
+        int action;
+
         if (RandomNumberGenerator.nextDouble() < Constants.MUTATION_PROBABILITY) {
-            cl.setAction(-cl.getAction() + 1);
+            do {
+                action = RandomNumberGenerator.nextInt(0, numOfActions - 1);
+            } while (action == cl.getAction());
+
+            cl.setAction(action);
         }
     }
 

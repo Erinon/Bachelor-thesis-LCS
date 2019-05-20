@@ -108,7 +108,7 @@ public class Classifier {
     }
 
     public void updateFitness() {
-        fitness = fitness + Constants.LEARNING_RATE * (relativeAccuracy * numerosity - fitness);
+        fitness = fitness + Constants.LEARNING_RATE * (relativeAccuracy - fitness);
     }
 
     public void updateTimestamp(int timeStamp) {
@@ -263,7 +263,7 @@ public class Classifier {
             return false;
         }
 
-        Set<CodeFragment> Y = new HashSet<CodeFragment>(Arrays.asList(that.condition));
+        Set<CodeFragment> Y = new HashSet<>(Arrays.asList(that.condition));
 
         for (CodeFragment cf : condition) {
             if (!cf.isDontCareFragment()) {
@@ -299,11 +299,63 @@ public class Classifier {
             return false;
         }
 
-        Set<CodeFragment> X = new HashSet<CodeFragment>(Arrays.asList(condition));
-        Set<CodeFragment> Y = new HashSet<CodeFragment>(Arrays.asList(that.condition));
+        boolean found;
 
-        return X.equals(Y);
+        for (int i = 0; i < this.conditionSize; i++) {
+            if (this.condition[i].isDontCareFragment()) {
+                continue;
+            }
 
+            found = false;
+
+            for (int j = 0; j < that.conditionSize; j++) {
+                if (that.condition[j].isDontCareFragment()) {
+                    continue;
+                }
+
+                if (this.condition[i].equals(that.condition[j])) {
+                    found = true;
+
+                    break;
+                }
+            }
+
+            if (!found) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(condition);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (CodeFragment cf : condition) {
+            sb.append(cf);
+            sb.append('\n');
+        }
+
+        sb.append(numerosity);
+        sb.append(' ');
+        sb.append(prediction);
+        sb.append(' ');
+        sb.append(predictionError);
+        sb.append(' ');
+        sb.append(fitness);
+        sb.append(' ');
+        sb.append(timeStamp);
+        sb.append(' ');
+        sb.append(experience);
+        sb.append(' ');
+        sb.append(actionSetSize);
+
+        return sb.toString();
+    }
 }

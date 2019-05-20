@@ -1,5 +1,7 @@
 package hr.fer.zemris.bachelor.LCS.CodeFragment.Node;
 
+import java.util.Objects;
+
 public abstract class UnaryNode extends Node {
 
     Node child;
@@ -24,6 +26,11 @@ public abstract class UnaryNode extends Node {
         UnaryNode that = (UnaryNode) obj;
 
         return getOperator().equals(that.getOperator()) && child.equals(that.child);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(child);
     }
 
 }

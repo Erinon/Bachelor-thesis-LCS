@@ -5,6 +5,6 @@ import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
 public interface Mutation {
 
-    void mutationOperation(Classifier cl, boolean[] input, CodeFragment[] reusedFragments, int rfLen);
+    void mutationOperation(Classifier cl, boolean[] input, int numOfActions, CodeFragment[] reusedFragments, int rfLen);
 
 }
