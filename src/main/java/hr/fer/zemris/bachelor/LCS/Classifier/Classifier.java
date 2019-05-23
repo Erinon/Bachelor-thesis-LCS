@@ -85,6 +85,8 @@ public class Classifier {
         } else {
             prediction = prediction + Constants.LEARNING_RATE * (reward - prediction);
         }
+
+        //prediction = prediction + Constants.LEARNING_RATE * (reward - prediction);
     }
 
     public void updatePredictionError(double reward) {
@@ -93,6 +95,8 @@ public class Classifier {
         } else {
             predictionError = predictionError + Constants.LEARNING_RATE * (Math.abs(reward - prediction) - predictionError);
         }
+
+        //predictionError = predictionError + Constants.LEARNING_RATE * (Math.abs(reward - prediction) - predictionError);
     }
 
     public void updateAccuracy() {
@@ -101,6 +105,8 @@ public class Classifier {
         } else {
             accuracy = Constants.FITNESS_FALL_OFF_RATE * Math.pow(predictionError / Constants.PREDICTION_ERROR_THRESHOLD, -Constants.FITNESS_EXPONENT);
         }
+
+        //accuracy = Constants.FITNESS_FALL_OFF_RATE * Math.pow(predictionError / Constants.PREDICTION_ERROR_THRESHOLD, -Constants.FITNESS_EXPONENT);
     }
 
     public void updateRelativeAccuracy(double accuracySum) {
@@ -125,6 +131,8 @@ public class Classifier {
         } else {
             actionSetSize = actionSetSize + Constants.LEARNING_RATE * (lastSize - actionSetSize);
         }
+
+        //actionSetSize = actionSetSize + Constants.LEARNING_RATE * (lastSize - actionSetSize);
     }
 
     public Set<CodeFragment> getCodeFragments() {

@@ -22,24 +22,6 @@ public class MuxDataGenerator implements DataProvider {
         this.size = controlBits + (int)Math.round(Math.pow(2, controlBits));
     }
 
-    public MuxDataGenerator(int size, boolean ignorable) {
-        int i;
-
-        for (i = 2; i <= 7; i++) {
-            if (i + (int)Math.round(Math.pow(2, i)) == size) {
-                this.controlBits = i;
-                this.count = 0;
-                this.size = controlBits + (int)Math.round(Math.pow(2, controlBits));
-
-                break;
-            }
-        }
-
-        if (i > 7) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void incCount() {
         if (controlBits < Constants.GREEDY_BREAKPOINT_BIT) {
             count = (count + 1) % (int)Math.round(Math.pow(2, size));
@@ -71,7 +53,7 @@ public class MuxDataGenerator implements DataProvider {
     }
 
     public Set<DataPiece> getData() {
-        Set<DataPiece> data = new HashSet<DataPiece>();
+        Set<DataPiece> data = new HashSet<>();
 
         int dataSize = controlBits < Constants.GREEDY_BREAKPOINT_BIT ? (int)Math.round(Math.pow(2, size)) : Constants.MAX_DATA_SIZE;
 

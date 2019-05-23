@@ -19,6 +19,7 @@ public class MuxTrainer implements Trainer {
     private static final int[] populationSizes = {500, 1000, 2000, 5000, 10000, 50000};
     private static final int[] trainingExamples = {500000, 500000, 500000, 1000000, 2000000, 5000000};
     private static final int numberOfActions = 2;
+    private static final int averageInstances = 1000;
     private int controlBits;
     private Selection selection;
     private Crossover crossover;
@@ -47,8 +48,6 @@ public class MuxTrainer implements Trainer {
     }
 
     public void train() {
-        final int testNumber = 30;
-
         for (int i = 2; i <= controlBits; i++) {
             results.put(i, new LinkedList<>());
 
@@ -61,21 +60,41 @@ public class MuxTrainer implements Trainer {
 
             System.out.println("Training for " + conditionSize + " bits");
 
+            Queue<Boolean> testValues = new LinkedList<>();
+            int currentTestNumber = 0;
+            int correctTests = 0;
+            boolean output;
+            boolean[] input;
+            double accuracy;
+
             for (int j = 0; j < trainingExamples[i - 2]; j++) {
                 lcs.explore();
 
+                input = environment.getInput();
+                output = environment.checkOutput(input, lcs.exploit(input));
+                testValues.add(output);
+                if (output) {
+                    correctTests++;
+                }
+                if (currentTestNumber < averageInstances) {
+                    currentTestNumber++;
+                } else if (testValues.remove()) {
+                    correctTests--;
+                }
+                accuracy = (float)correctTests / currentTestNumber;
+
+                results.get(i).add(new double[] {j, accuracy});
+
+                //System.out.println(correctTests + " " + currentTestNumber);
+
+                /*if (j % 1000 == 0) {
+                    lcs.printTimes();
+                    lcs.printSizes();
+                }*/
+
                 if (j % 10000 == 0) {
-                    double sum = 0.;
-
-                    for (int k = 0; k < testNumber; k++) {
-                        if (environment.checkOutput(lcs.exploit(environment.getInput()))) {
-                            sum++;
-                        }
-                    }
-
-                    results.get(i).add(new double[] {j, sum / testNumber});
-
-                    System.out.printf("Run %7d:\t%.2f\n", j, sum / testNumber);
+                    //System.out.println(correctTests + " " + currentTestNumber);
+                    System.out.printf("Run %7d:\t%.2f\n", j, accuracy);
                     //System.out.println("Population size: " + lcs.getPopulationSize());
                 }
             }
@@ -87,6 +106,8 @@ public class MuxTrainer implements Trainer {
             newFragments.toArray(reusedFragments);
 
             lcs.printTimes();
+
+            System.out.println(reusedFragments.length);
 
             //lcs.printClassifiers();
 

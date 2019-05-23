@@ -30,10 +30,15 @@ public class LearningClassifierSystem {
     private int rfLen;
     private int timeStampSum;
     private int actionSetSize;
+    private double fitnessSum;
     private long giTime;
     private long gmsTime;
     private long gms1;
     private long gms2;
+    private long gms3;
+    private long gms4;
+    private long gms5;
+    private long gms6;
     private long cpaTime;
     private long saTime;
     private long fasTime;
@@ -45,7 +50,10 @@ public class LearningClassifierSystem {
     private long ga3;
     private long ga4;
     private long ga5;
+    private long ga6;
     private long assTime;
+    private int maxBr = 1;
+    private int maxBrTimes = 0;
 
     public LearningClassifierSystem(int conditionSize, int numberOfActions, int maxPopulationSize, Environment environment,
                                     Selection selection, Crossover crossover, Mutation mutation, CodeFragment[] reusedFragments, int rfLen) {
@@ -121,36 +129,71 @@ public class LearningClassifierSystem {
         boolean found = true;
 
         Classifier inserted;
-
+        int br = 0;
         while (found) {
             found = false;
+            br++;
 
             for (int a = 0; a < numberOfActions; a++) {
                 //System.out.println(matchedActions[a]);
                 if (matchedActions[a] <= 0) {
-                    inserted = insertIntoPopulation(coveringOperation(input, a));
+                    t1 = System.currentTimeMillis();
+
+                    //inserted = insertIntoPopulation(coveringOperation(input, a));
+                    inserted = coveringOperation(input, a);
+
+                    t2 = System.currentTimeMillis();
+
+                    gms3 += t2 - t1;
 
                     if (inserted != null) {
+                        population.add(inserted);
                         matchSet.add(inserted);
+                        populationSize++;
                         matchedActions[a] = matchedActions[a] + 1;
                     }
 
-                    Classifier deleted = deleteFromPopulation();
+                    t1 = System.currentTimeMillis();
+
+                    gms4 += t1 - t2;
+
+                    //Classifier deleted = deleteFromPopulation();
+                    Classifier deleted = null;
+
+                    t2 = System.currentTimeMillis();
+
+                    gms5 += t2 - t1;
 
                     if (deleted != null && deleted.doesMatch(input)) {
                         matchedActions[deleted.getAction()] = matchedActions[deleted.getAction()] - 1;
-                        System.out.println("true");
-                        found = true;
 
-                        break;
+                        if (matchedActions[deleted.getAction()] <= 0) {
+                            found = true;
+
+                            break;
+                        }
+                        //System.out.println("true");
                     }
+
+                    t1 = System.currentTimeMillis();
+
+                    gms6 += t1 - t2;
                 }
             }
+        }
+
+        if (br > maxBr) {
+            maxBr = br;
+            maxBrTimes = 1;
+        } else if (br == maxBr) {
+            maxBrTimes++;
         }
 
         /*for (Classifier cl : matchSet) {
             System.out.println(cl);
         }*/
+
+        //System.out.println(matchSet.size());
     }
 
     private double[] calculatePredictionArray() {
@@ -222,6 +265,7 @@ public class LearningClassifierSystem {
         }
 
         timeStampSum = 0;
+        fitnessSum = 0.;
 
         for (Classifier cl : actionSet) {
             cl.updateRelativeAccuracy(accuracySum);
@@ -229,6 +273,7 @@ public class LearningClassifierSystem {
             cl.updateActionSetSize(actionSetSize);
 
             timeStampSum += cl.getTimeStamp() * cl.getNumerosity();
+            fitnessSum += cl.getFitness();
         }
     }
 
@@ -264,16 +309,20 @@ public class LearningClassifierSystem {
             p2.setNumerosity(p2.getNumerosity() + 1);
             populationSize++;
         } else {
+            //population.add(c);
+            //populationSize++;
             insertIntoPopulation(c);
         }
 
         t1 = System.currentTimeMillis();
 
-        deleteFromPopulation();
+        ga5 += t1 - t2;
+
+        //deleteFromPopulation();
 
         t2 = System.currentTimeMillis();
 
-        ga5 += t2 - t1;
+        ga6 += t2 - t1;
     }
 
     private void geneticAlgorithm(boolean[] input) {
@@ -357,11 +406,7 @@ public class LearningClassifierSystem {
             return null;
         }
 
-        double fitnessSum = 0.;
-
-        for (Classifier cl : population) {
-            fitnessSum += cl.getFitness();
-        }
+        //System.out.printf("deleting ");
 
         double averageFitness = fitnessSum / populationSize;
 
@@ -372,6 +417,7 @@ public class LearningClassifierSystem {
         }
 
         double choicePoint = RandomNumberGenerator.nextDouble(0, voteSum);
+
         voteSum = 0.;
 
         Classifier deleted = null;
@@ -379,7 +425,7 @@ public class LearningClassifierSystem {
         for (Classifier cl : population) {
             voteSum += cl.deletionVote(averageFitness);
 
-            if (choicePoint < voteSum) {
+            if (choicePoint <= voteSum) {
                 if (cl.getNumerosity() > 1) {
                     cl.setNumerosity(cl.getNumerosity() - 1);
                 } else {
@@ -390,11 +436,15 @@ public class LearningClassifierSystem {
                     actionSet.remove(cl);
                 }
 
+                //System.out.print("true\n");
+
                 populationSize--;
 
                 return deleted;
             }
         }
+
+        //System.out.print("false\n");
 
         return null;
     }
@@ -461,7 +511,7 @@ public class LearningClassifierSystem {
 
         giTime += System.currentTimeMillis() - t1;
 
-        int action = exploit(input);
+        int action = exploitOwn(input);
 
         t1 = System.currentTimeMillis();
 
@@ -471,7 +521,7 @@ public class LearningClassifierSystem {
 
         fasTime += t2 - t1;
 
-        double reward = environment.getReward(action);
+        double reward = environment.getReward(input, action);
 
         t1 = System.currentTimeMillis();
 
@@ -495,10 +545,14 @@ public class LearningClassifierSystem {
 
         assTime += t2 - t1;
 
+        while (populationSize > maxPopulationSize) {
+            deleteFromPopulation();
+        }
+
         return action;
     }
 
-    public int exploit(boolean[] input) {
+    private int exploitOwn(boolean[] input) {
         long t1 = System.currentTimeMillis();
 
         generateMatchSet(input);
@@ -522,32 +576,66 @@ public class LearningClassifierSystem {
         return action;
     }
 
+    public int exploit(boolean[] input) {
+        int action = exploitOwn(input);
+
+        while (populationSize > maxPopulationSize) {
+            deleteFromPopulation();
+        }
+
+        return action;
+    }
+
     public void printClassifiers() {
         for (Classifier cl : population) {
             System.out.println(cl);
         }
     }
 
+    private int realSize() {
+        int size = 0;
+
+        for (Classifier cl : population) {
+            size += cl.getNumerosity();
+        }
+
+        return size;
+    }
+
+    public void printSizes() {
+        System.out.println("expected size:\t" + populationSize);
+        System.out.println("set size:\t" + population.size());
+        System.out.println("real size:\t" + realSize());
+    }
+
     public void printTimes() {
         double sum = (giTime + gmsTime + cpaTime + saTime + fasTime + grTime + upTime + gaTime + assTime);
 
-        System.out.printf("Total time:\t%.2f\n", sum / 60000.);
-        System.out.printf("Get input:\t%.2f\n", giTime / sum * 100);
-        System.out.printf("Match set:\t%.2f\n", gmsTime / sum * 100);
-        System.out.printf("Match set 1:\t%.2f\n", (double)gms1 / gmsTime * 100);
-        System.out.printf("Match set 2:\t%.2f\n", (double)gms2 / gmsTime * 100);
-        System.out.printf("Pred array:\t%.2f\n", cpaTime / sum * 100);
-        System.out.printf("Sel action:\t%.2f\n", saTime / sum * 100);
-        System.out.printf("Action set:\t%.2f\n", fasTime / sum * 100);
-        System.out.printf("Get reward:\t%.2f\n", grTime / sum * 100);
-        System.out.printf("Upd params:\t%.2f\n", upTime / sum * 100);
-        System.out.printf("Genetic alg:\t%.2f\n", gaTime / sum * 100);
-        System.out.printf("Gen alg 1:\t%.2f\n", (double)ga1 / gaTime * 100);
-        System.out.printf("Gen alg 2:\t%.2f\n", (double)ga2 / gaTime * 100);
-        System.out.printf("Gen alg 3:\t%.2f\n", (double)ga3 / gaTime * 100);
-        System.out.printf("Gen alg 4:\t%.2f\n", (double)ga4 / gaTime * 100);
-        System.out.printf("Gen alg 5:\t%.2f\n", (double)ga5 / gaTime * 100);
-        System.out.printf("AS subsumpt:\t%.2f\n", assTime / sum * 100);
+        System.out.printf("Total time:\t%5.2f\n", sum / 60000.);
+        System.out.printf("Get input:\t%5.2f\n", giTime / sum * 100);
+        System.out.printf("Match set:\t%5.2f\n", gmsTime / sum * 100);
+        System.out.printf("Match set 1:\t%5.2f\n", (double)gms1 / gmsTime * 100);
+        System.out.printf("Match set 2:\t%5.2f\n", (double)gms2 / gmsTime * 100);
+        System.out.printf("Match set 3:\t%5.2f\n", (double)gms3 / gmsTime * 100);
+        System.out.printf("Match set 4:\t%5.2f\n", (double)gms4 / gmsTime * 100);
+        System.out.printf("Match set 5:\t%5.2f\n", (double)gms5 / gmsTime * 100);
+        System.out.printf("Match set 6:\t%5.2f\n", (double)gms6 / gmsTime * 100);
+        System.out.printf("Pred array:\t%5.2f\n", cpaTime / sum * 100);
+        System.out.printf("Sel action:\t%5.2f\n", saTime / sum * 100);
+        System.out.printf("Action set:\t%5.2f\n", fasTime / sum * 100);
+        System.out.printf("Get reward:\t%5.2f\n", grTime / sum * 100);
+        System.out.printf("Upd params:\t%5.2f\n", upTime / sum * 100);
+        System.out.printf("Genetic alg:\t%5.2f\n", gaTime / sum * 100);
+        System.out.printf("Gen alg 1:\t%5.2f\n", (double)ga1 / gaTime * 100);
+        System.out.printf("Gen alg 2:\t%5.2f\n", (double)ga2 / gaTime * 100);
+        System.out.printf("Gen alg 3:\t%5.2f\n", (double)ga3 / gaTime * 100);
+        System.out.printf("Gen alg 4:\t%5.2f\n", (double)ga4 / gaTime * 100);
+        System.out.printf("Gen alg 5:\t%5.2f\n", (double)ga5 / gaTime * 100);
+        System.out.printf("Gen alg 6:\t%5.2f\n", (double)ga6 / gaTime * 100);
+        System.out.printf("AS subsumpt:\t%5.2f\n", assTime / sum * 100);
+
+        System.out.println("max repeats:\t" + maxBr);
+        System.out.println("max rep time:\t" + maxBrTimes);
     }
 
 }
