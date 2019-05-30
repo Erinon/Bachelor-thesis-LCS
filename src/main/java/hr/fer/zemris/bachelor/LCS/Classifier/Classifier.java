@@ -5,11 +5,13 @@ import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Classifier {
 
     private CodeFragment[] condition;
+    private int hashCode;
     private int conditionSize;
     private int action;
     private double prediction;
@@ -300,6 +302,10 @@ public class Classifier {
             return false;
         }
 
+        if (this.hashCode() != that.hashCode()) {
+            return false;
+        }
+
         int x = getNumberOfDontCareCodeFragments();
         int y = that.getNumberOfDontCareCodeFragments();
 
@@ -336,9 +342,16 @@ public class Classifier {
         return true;
     }
 
+    public void updateHashCode() {
+        int result = Objects.hash(action);
+        result = 31 * result + Arrays.hashCode(condition);
+
+        this.hashCode = result;
+    }
+
     @Override
     public int hashCode() {
-        return Arrays.hashCode(condition);
+        return this.hashCode;
     }
 
     @Override
