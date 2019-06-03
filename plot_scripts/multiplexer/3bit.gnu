@@ -1,9 +1,9 @@
 #! /usr/bin/gnuplot
 
-set terminal pdf
-set output  "results/multiplexer/3bit.pdf"
-set title "Performance of XCS on 11 bit MUX"
-set xlabel "Training instances / * 1000"
-set ylabel "Correct percentage / %"
-plot [] [0 to 100] "results/multiplexer/3bit.dat" notitle with lines
+set terminal pdf font "Helvetica,22"
+set output  "results/multiplexer/11bit.pdf"
+set title "Ponašanje XCS sustava na 8/1 MUX-u"
+set xlabel "Broj testnih primjera / 1000"
+set ylabel "Točnost"
+plot [] [0 to 1.1] "results/multiplexer/11bit.dat" notitle with lines
 

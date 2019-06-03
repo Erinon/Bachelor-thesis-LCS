@@ -257,6 +257,10 @@ public class Classifier {
 
     public boolean doesMatch(boolean[] input) {
         for (int i = 0; i < conditionSize; i++) {
+            if (condition[i].isDontCareFragment()) {
+                continue;
+            }
+
             if (!condition[i].evaluate(input)) {
                 return false;
             }

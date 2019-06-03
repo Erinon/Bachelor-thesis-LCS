@@ -13,10 +13,26 @@ public class MuxEnvironment implements Environment {
     private int controlBits;
     private int size;
 
-    public MuxEnvironment(int controlBits) {
+    public MuxEnvironment(int bits) {
         //this.dataProvider = new MuxDataGenerator(bits);
-        this.controlBits = controlBits;
-        this.size = controlBits + (int)Math.round(Math.pow(2, controlBits));
+        this.size = bits;
+        this.controlBits = getControlBits();
+
+        if (controlBits <= 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private int getControlBits() {
+        for (int i = 0; i < size; i++) {
+            int b = i + (int)Math.round(Math.pow(2, i));
+
+            if (b == size) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     public boolean[] getInput() {
@@ -55,6 +71,11 @@ public class MuxEnvironment implements Environment {
 
         return (input[index] ? 1 : 0) == output;
         //return output == currentDataPiece.getOutput();
+    }
+
+    @Override
+    public Environment newInstance(int bits) {
+        return new MuxEnvironment(bits);
     }
 
 }

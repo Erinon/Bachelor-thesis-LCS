@@ -13,9 +13,9 @@ if [ "$?" -ne 0 ]; then
     exit $?
 fi
 
-while [ "$bits" -ge 2 ]
-do
-    gnuplot "plot_scripts/multiplexer/${bits}bit.gnu"
-    bits=$((bits - 1))
-done
+#while [ "$bits" -ge 2 ]
+#do
+#    gnuplot "plot_scripts/multiplexer/${bits}bit.gnu"
+#    bits=$((bits - 1))
+#done
 

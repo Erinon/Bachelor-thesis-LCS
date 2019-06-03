@@ -236,7 +236,7 @@ public class LearningClassifierSystem {
             cl.updateActionSetSize(actionSetSize);
 
             timeStampSum += cl.getTimeStamp() * cl.getNumerosity();
-            fitnessSum += cl.getFitness();
+            fitnessSum += cl.getFitness() * cl.getNumerosity();
         }
     }
 
@@ -345,7 +345,13 @@ public class LearningClassifierSystem {
 
         //System.out.printf("deleting ");
 
-        double averageFitness = fitnessSum / populationSize;
+        double fSum = 0.;
+
+        for (Classifier c : population.keySet()) {
+            fSum += c.getFitness() * c.getNumerosity();
+        }
+
+        double averageFitness = fSum / populationSize;
 
         double voteSum = 0.;
 
@@ -513,14 +519,39 @@ public class LearningClassifierSystem {
         return action;
     }
 
+    private void exploitMatchSet(boolean[] input) {
+        matchSet = new HashSet<>();
+
+        for (Classifier cl : population.keySet()) {
+            boolean match = cl.doesMatch(input);
+
+            if (match) {
+                matchSet.add(cl);
+            }
+        }
+    }
+
     public int exploit(boolean[] input) {
-        int action = exploitOwn(input);
+        exploitMatchSet(input);
+
+        double[] predictionArray = calculatePredictionArray();
+        int len = predictionArray.length;
+
+        int maxA = 0;
+        double maxP = predictionArray[0];
+
+        for (int i = 0; i < len; i++) {
+            if (predictionArray[i] > maxP) {
+                maxP = predictionArray[i];
+                maxA = i;
+            }
+        }
 
         while (populationSize > maxPopulationSize) {
             deleteFromPopulation();
         }
 
-        return action;
+        return maxA;
     }
 
     public void printClassifiers() {

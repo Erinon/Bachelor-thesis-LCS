@@ -1,7 +1,8 @@
 package hr.fer.zemris.bachelor;
 
+import hr.fer.zemris.bachelor.Trainer.AbstractTrainer;
 import hr.fer.zemris.bachelor.Trainer.MuxTrainer;
-import hr.fer.zemris.bachelor.Trainer.Trainer;
+import hr.fer.zemris.bachelor.Trainer.ParityTrainer;
 
 public class Application {
 
@@ -14,7 +15,7 @@ public class Application {
 
         //condBits = 2;
 
-        Trainer trainer = new MuxTrainer(condBits);
+        AbstractTrainer trainer = new ParityTrainer(condBits);
 
         trainer.train();
     }

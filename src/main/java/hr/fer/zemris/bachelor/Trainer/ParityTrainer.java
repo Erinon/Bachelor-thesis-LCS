@@ -1,50 +1,77 @@
 package hr.fer.zemris.bachelor.Trainer;
 
-import hr.fer.zemris.bachelor.LCS.CodeFragment.CodeFragment;
 import hr.fer.zemris.bachelor.LCS.Crossover.Crossover;
 import hr.fer.zemris.bachelor.LCS.Crossover.TwoPointCrossover;
+import hr.fer.zemris.bachelor.LCS.Environment.Environment;
+import hr.fer.zemris.bachelor.LCS.Environment.ParityEnvironment;
 import hr.fer.zemris.bachelor.LCS.Mutation.Mutation;
 import hr.fer.zemris.bachelor.LCS.Mutation.SimpleMutation;
 import hr.fer.zemris.bachelor.LCS.Selection.Selection;
 import hr.fer.zemris.bachelor.LCS.Selection.TournamentSelection;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
-public class ParityTrainer implements Trainer {
+public class ParityTrainer extends AbstractTrainer {
 
-    private static final int[] populationSizes = {500, 1000, 2000, 5000, 10000, 50000};
-    private static final int[] trainingExamples = {500000, 500000, 500000, 1000000, 2000000, 5000000};
-    private static final int numberOfActions = 2;
-    private static final int averageInstances = 1000;
-    private int bits;
-    private Selection selection;
-    private Crossover crossover;
-    private Mutation mutation;
-    private CodeFragment[] reusedFragments;
-    private int rfLen;
-    private Map<Integer, List<double[]>> results;
+    private int[] populationSizes = new int[] {200, 300, 400, 500, 1000, 2000};
+    private int[] trainingExamples = new int[] {500000, 500000, 500000, 1000000, 2000000, 5000000};
+    private int[] bits = new int[] {2, 3, 4, 5, 6, 7};
+    private int num;
 
-    public ParityTrainer(int bits) {
-        if (bits <= 0) {
-            throw new IllegalArgumentException();
-        }
+    public ParityTrainer(int num) {
+        super();
 
-        this.bits = bits;
-
-        this.selection = new TournamentSelection();
-        this.crossover = new TwoPointCrossover();
-        this.mutation = new SimpleMutation();
-        this.reusedFragments = new CodeFragment[0];
-        this.rfLen = 0;
-        this.results = new HashMap<>();
+        this.num = num;
     }
 
-    public void train() {
-        for (int i = 1; i < bits; i++) {
-            
-        }
+    @Override
+    int[] getPopulationSizes() {
+        return Arrays.copyOfRange(populationSizes, 0, num);
+    }
+
+    @Override
+    int[] getTrainingExamples() {
+        return Arrays.copyOfRange(trainingExamples, 0, num);
+    }
+
+    @Override
+    int[] getBits() {
+        return Arrays.copyOfRange(bits, 0, num);
+    }
+
+    @Override
+    String getType() {
+        return "parity";
+    }
+
+    @Override
+    int getNumberOfActions() {
+        return 2;
+    }
+
+    @Override
+    int getNumberOfInstancesForResultCalculation() {
+        return 1000;
+    }
+
+    @Override
+    Selection getSelection() {
+        return new TournamentSelection();
+    }
+
+    @Override
+    Crossover getCrossover() {
+        return new TwoPointCrossover();
+    }
+
+    @Override
+    Mutation getMutation() {
+        return new SimpleMutation();
+    }
+
+    @Override
+    Environment getEnvironment(int bits) {
+        return new ParityEnvironment(bits);
     }
 
 }

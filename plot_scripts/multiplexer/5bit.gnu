@@ -1,9 +1,9 @@
 #! /usr/bin/gnuplot
 
-set terminal pdf
-set output  "results/multiplexer/5bit.pdf"
-set title "Performance of XCS on 37 bit MUX"
-set xlabel "Training instances / * 1000"
-set ylabel "Correct percentage / %"
-plot [] [0 to 100] "results/multiplexer/5bit.dat" notitle with lines
+set terminal pdf font "Helvetica,22"
+set output  "results/multiplexer/37bit.pdf"
+set title "Ponašanje XCS sustava na 32/1 MUX-u"
+set xlabel "Broj testnih primjera / 1000"
+set ylabel "Točnost"
+plot [] [0 to 1.1] "results/multiplexer/37bit.dat" notitle with lines
 

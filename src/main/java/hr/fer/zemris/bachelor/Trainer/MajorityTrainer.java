@@ -3,7 +3,7 @@ package hr.fer.zemris.bachelor.Trainer;
 import hr.fer.zemris.bachelor.LCS.Crossover.Crossover;
 import hr.fer.zemris.bachelor.LCS.Crossover.TwoPointCrossover;
 import hr.fer.zemris.bachelor.LCS.Environment.Environment;
-import hr.fer.zemris.bachelor.LCS.Environment.MuxEnvironment;
+import hr.fer.zemris.bachelor.LCS.Environment.MajorityEnvironment;
 import hr.fer.zemris.bachelor.LCS.Mutation.Mutation;
 import hr.fer.zemris.bachelor.LCS.Mutation.SimpleMutation;
 import hr.fer.zemris.bachelor.LCS.Selection.Selection;
@@ -11,13 +11,14 @@ import hr.fer.zemris.bachelor.LCS.Selection.TournamentSelection;
 
 import java.util.Arrays;
 
-public class MuxTrainer extends AbstractTrainer {
+public class MajorityTrainer extends AbstractTrainer {
+
     private int[] populationSizes = new int[] {500, 1000, 2000, 5000, 10000, 50000};
     private int[] trainingExamples = new int[] {500000, 500000, 500000, 1000000, 2000000, 5000000};
-    private int[] bits = new int[] {6, 11, 20, 37, 70, 135};
+    private int[] bits = new int[] {5, 10, 20, 30};
     private int num;
 
-    public MuxTrainer(int num) {
+    public MajorityTrainer(int num) {
         super();
 
         this.num = num;
@@ -40,7 +41,7 @@ public class MuxTrainer extends AbstractTrainer {
 
     @Override
     String getType() {
-        return "multiplexer";
+        return "majority";
     }
 
     @Override
@@ -70,7 +71,7 @@ public class MuxTrainer extends AbstractTrainer {
 
     @Override
     Environment getEnvironment(int bits) {
-        return new MuxEnvironment(bits);
+        return new MajorityEnvironment(bits);
     }
 
 }

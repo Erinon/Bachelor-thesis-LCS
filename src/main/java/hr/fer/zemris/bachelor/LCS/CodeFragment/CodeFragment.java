@@ -24,7 +24,9 @@ public class CodeFragment {
     private static Node getRandomSubtree(int depth, int inputSize, CodeFragment[] reusedFragments, int rfLen) {
         if (depth <= 0) {
             if (rfLen > 0 && RandomNumberGenerator.nextDouble() < 0.5) {
-                return reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
+                Node n = reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
+                //System.out.println(n);
+                return n;
             } else {
                 return new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
             }
@@ -69,6 +71,7 @@ public class CodeFragment {
             case 2:
                 if (rfLen > 0 && RandomNumberGenerator.nextDouble() < 0.5) {
                     node = reusedFragments[RandomNumberGenerator.nextInt(0, rfLen - 1)].rootNode;
+                    //System.out.println(node);
                 } else {
                     node = new TerminalNode(RandomNumberGenerator.nextInt(0, inputSize - 1));
                 }

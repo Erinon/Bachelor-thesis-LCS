@@ -3,11 +3,11 @@ package hr.fer.zemris.bachelor.LCS.Environment;
 import hr.fer.zemris.bachelor.Constants.Constants;
 import hr.fer.zemris.bachelor.RandomNumberGenerator.RandomNumberGenerator;
 
-public class ParityEnvironment implements Environment {
+public class MajorityEnvironment implements Environment {
 
     private int size;
 
-    public ParityEnvironment(int size) {
+    public MajorityEnvironment(int size) {
         if (size <= 0) {
             throw new IllegalArgumentException();
         }
@@ -41,20 +41,24 @@ public class ParityEnvironment implements Environment {
             throw new IllegalArgumentException();
         }
 
-        int num = output;
+        int ones = 0;
 
         for (int i = 0; i < size; i++) {
             if (input[i]) {
-                num++;
+                ones++;
             }
         }
 
-        return num % 2 == 0;
+        if (2 * ones == size) {
+            return true;
+        }
+
+        return output == (2 * ones > size ? 1: 0);
     }
 
     @Override
     public Environment newInstance(int bits) {
-        return new ParityEnvironment(bits);
+        return new MajorityEnvironment(bits);
     }
 
 }
