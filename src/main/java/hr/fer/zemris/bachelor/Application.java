@@ -1,9 +1,6 @@
 package hr.fer.zemris.bachelor;
 
-import hr.fer.zemris.bachelor.Trainer.AbstractTrainer;
-import hr.fer.zemris.bachelor.Trainer.MajorityTrainer;
-import hr.fer.zemris.bachelor.Trainer.MuxTrainer;
-import hr.fer.zemris.bachelor.Trainer.ParityTrainer;
+import hr.fer.zemris.bachelor.Trainer.*;
 
 public class Application {
 
@@ -27,7 +24,7 @@ public class Application {
                 trainer = new MajorityTrainer(num);
                 break;
             case "carry":
-                trainer = new MuxTrainer(num);
+                trainer = new CarryTrainer(num);
                 break;
             default:
                 throw new IllegalArgumentException();
