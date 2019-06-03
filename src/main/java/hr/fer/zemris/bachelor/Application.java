@@ -1,21 +1,37 @@
 package hr.fer.zemris.bachelor;
 
 import hr.fer.zemris.bachelor.Trainer.AbstractTrainer;
+import hr.fer.zemris.bachelor.Trainer.MajorityTrainer;
 import hr.fer.zemris.bachelor.Trainer.MuxTrainer;
 import hr.fer.zemris.bachelor.Trainer.ParityTrainer;
 
 public class Application {
 
     public static void main(String[] args) {
-        if (args.length != 1) {
+        if (args.length != 2) {
             throw new IllegalArgumentException();
         }
 
-        int condBits = Integer.parseInt(args[0]);
+        int num = Integer.parseInt(args[1]);
 
-        //condBits = 2;
+        AbstractTrainer trainer;
 
-        AbstractTrainer trainer = new ParityTrainer(condBits);
+        switch (args[0]) {
+            case "mux":
+                trainer = new MuxTrainer(num);
+                break;
+            case "parity":
+                trainer = new ParityTrainer(num);
+                break;
+            case "majority":
+                trainer = new MajorityTrainer(num);
+                break;
+            case "carry":
+                trainer = new MuxTrainer(num);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
         trainer.train();
     }

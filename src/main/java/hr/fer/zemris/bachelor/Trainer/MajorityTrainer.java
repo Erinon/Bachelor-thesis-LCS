@@ -13,9 +13,9 @@ import java.util.Arrays;
 
 public class MajorityTrainer extends AbstractTrainer {
 
-    private int[] populationSizes = new int[] {500, 1000, 2000, 5000, 10000, 50000};
-    private int[] trainingExamples = new int[] {500000, 500000, 500000, 1000000, 2000000, 5000000};
-    private int[] bits = new int[] {5, 10, 20, 30};
+    private int[] populationSizes = new int[] {500, 1000, 2000};
+    private int[] trainingExamples = new int[] {500000, 500000, 500000};
+    private int[] bits = new int[] {3, 5, 7};
     private int num;
 
     public MajorityTrainer(int num) {

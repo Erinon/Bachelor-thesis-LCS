@@ -1,13 +1,14 @@
 #! /bin/bash
 
-bits=$1
-
-if [ "$#" -ne 1 ]; then
-    bits=2
+if [ "$#" -ne 2 ]; then
+    exit 1
 fi
 
+type=$1
+bits=$2
+
 # run project
-java -cp target/classes hr.fer.zemris.bachelor.Application $bits
+java -cp target/classes hr.fer.zemris.bachelor.Application $type $bits
 
 if [ "$?" -ne 0 ]; then
     exit $?

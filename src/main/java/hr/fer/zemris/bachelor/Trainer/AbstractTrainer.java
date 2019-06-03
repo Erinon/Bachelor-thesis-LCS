@@ -68,7 +68,7 @@ public abstract class AbstractTrainer {
             LearningClassifierSystem lcs = new LearningClassifierSystem(bits[i], numberOfActions, populationSizes[i],
                     environment, selection, crossover, mutation, reusedFragments, rfLen);
 
-            System.out.println("Training for " + bits[i] + " bits");
+            System.out.println("Training " + type + " for " + bits[i] + " bits");
 
             Queue<Boolean> testValues = new LinkedList<>();
             int currentTestNumber = 0;

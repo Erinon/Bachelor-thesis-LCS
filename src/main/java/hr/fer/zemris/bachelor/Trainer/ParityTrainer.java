@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class ParityTrainer extends AbstractTrainer {
 
     private int[] populationSizes = new int[] {200, 300, 400, 500, 1000, 2000};
-    private int[] trainingExamples = new int[] {500000, 500000, 500000, 1000000, 2000000, 5000000};
+    private int[] trainingExamples = new int[] {500000, 500000, 500000, 500000, 500000, 500000};
     private int[] bits = new int[] {2, 3, 4, 5, 6, 7};
     private int num;
 
