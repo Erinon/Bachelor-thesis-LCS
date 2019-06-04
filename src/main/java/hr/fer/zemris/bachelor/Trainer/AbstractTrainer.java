@@ -122,7 +122,7 @@ public abstract class AbstractTrainer {
             }
 
             double mean = (double)correctTests / testInstances;
-            double diffSumSq = correctTests * (1. - 2. * mean) + testInstances * mean * mean;
+            double diffSumSq = correctTests * (1. - mean);
             double stdDev = Math.sqrt(diffSumSq / (testInstances - 1.));
 
             System.out.println("Mean: " + mean);
@@ -133,7 +133,8 @@ public abstract class AbstractTrainer {
 
             reusedFragments = new CodeFragment[newFragments.size()];
             newFragments.toArray(reusedFragments);
-            rfLen = reusedFragments.length;
+            rfLen = 0;
+            //rfLen = reusedFragments.length;
 
             lcs.printTimes();
 

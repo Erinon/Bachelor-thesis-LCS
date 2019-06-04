@@ -27,4 +27,8 @@ public class Constants {
         Constants.DONT_CARE_PROBABILITY = dontCareProbability;
     }
 
+    public static void setMutationProbability(double mutationProbability) {
+        Constants.MUTATION_PROBABILITY = mutationProbability;
+    }
+
 }

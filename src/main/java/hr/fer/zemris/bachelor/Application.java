@@ -14,7 +14,7 @@ public class Application {
         AbstractTrainer trainer;
 
         switch (args[0]) {
-            case "mux":
+            case "multiplexer":
                 trainer = new MuxTrainer(num);
                 break;
             case "parity":

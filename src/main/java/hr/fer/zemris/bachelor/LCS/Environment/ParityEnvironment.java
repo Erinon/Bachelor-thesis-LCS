@@ -41,7 +41,7 @@ public class ParityEnvironment implements Environment {
             throw new IllegalArgumentException();
         }
 
-        int num = output;
+        int num = 0;
 
         for (int i = 0; i < size; i++) {
             if (input[i]) {
@@ -49,7 +49,7 @@ public class ParityEnvironment implements Environment {
             }
         }
 
-        return num % 2 == 0;
+        return output != num % 2;
     }
 
     @Override

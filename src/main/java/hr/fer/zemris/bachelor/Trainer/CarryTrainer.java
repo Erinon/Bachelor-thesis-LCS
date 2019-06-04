@@ -1,15 +1,21 @@
 package hr.fer.zemris.bachelor.Trainer;
 
 import hr.fer.zemris.bachelor.LCS.Crossover.Crossover;
+import hr.fer.zemris.bachelor.LCS.Crossover.TwoPointCrossover;
+import hr.fer.zemris.bachelor.LCS.Environment.CarryEnvironment;
 import hr.fer.zemris.bachelor.LCS.Environment.Environment;
 import hr.fer.zemris.bachelor.LCS.Mutation.Mutation;
+import hr.fer.zemris.bachelor.LCS.Mutation.SimpleMutation;
 import hr.fer.zemris.bachelor.LCS.Selection.Selection;
+import hr.fer.zemris.bachelor.LCS.Selection.TournamentSelection;
+
+import java.util.Arrays;
 
 public class CarryTrainer extends AbstractTrainer {
 
-    private int[] populationSizes = new int[] {200, 300, 400, 500, 1000, 2000};
-    private int[] trainingExamples = new int[] {500000, 500000, 500000, 500000, 500000, 500000};
-    private int[] bits = new int[] {2, 3, 4, 5, 6, 7};
+    private int[] populationSizes = new int[] {1000, 2000, 4000, 6000};
+    private int[] trainingExamples = new int[] {500000, 500000, 1000000, 1000000};
+    private int[] bits = new int[] {4, 6, 8, 10};
     private int num;
 
     public CarryTrainer(int num) {
@@ -20,51 +26,52 @@ public class CarryTrainer extends AbstractTrainer {
 
     @Override
     int[] getPopulationSizes() {
-        return new int[0];
+        return Arrays.copyOfRange(populationSizes, 0, num);
     }
 
     @Override
     int[] getTrainingExamples() {
-        return new int[0];
+        return Arrays.copyOfRange(trainingExamples, 0, num);
     }
 
     @Override
     int[] getBits() {
-        return new int[0];
+        return Arrays.copyOfRange(bits, 0, num);
     }
 
     @Override
     String getType() {
-        return null;
+        return "carry";
     }
 
     @Override
     int getNumberOfActions() {
-        return 0;
+        return 2;
     }
 
     @Override
     int getNumberOfInstancesForResultCalculation() {
-        return 0;
+        return 1000;
     }
 
     @Override
     Selection getSelection() {
-        return null;
+        return new TournamentSelection();
     }
 
     @Override
     Crossover getCrossover() {
-        return null;
+        return new TwoPointCrossover();
     }
 
     @Override
     Mutation getMutation() {
-        return null;
+        return new SimpleMutation();
     }
 
     @Override
     Environment getEnvironment(int bits) {
-        return null;
+        return new CarryEnvironment(bits);
     }
+
 }

@@ -37,13 +37,18 @@ public class CarryEnvironment implements Environment {
 
     @Override
     public boolean checkOutput(boolean[] input, int output) {
-        int c = 0;
+        int numSize = size / 2;
+        boolean c = false;
+        boolean a, b;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < numSize; i++) {
+            a = input[i];
+            b = input[numSize + i];
 
+            c = (a & b) | (c & (a ^ b));
         }
 
-        return true;
+        return output == (c ? 1 : 0);
     }
 
     @Override
